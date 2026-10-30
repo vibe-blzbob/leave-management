@@ -372,529 +372,523 @@ export default function PrintLeave(): React.JSX.Element {
 
       {/* ================= PRINT CANVAS CONTAINER (8.5 × 13 INCHES) ================= */}
       <div className="w-full py-8 px-2 flex justify-center overflow-auto print:p-0 print:overflow-visible print:block">
-          <div className="cs-form-printable flex flex-col gap-10 items-center print:block" style={{ width: '8.5in' }}>
-            {/* Sheet 1 */}
-            <div
-              className="cs-page cs-page-1 p-6 text-[10px] leading-[1.28] text-black bg-white shadow-2xl flex flex-col justify-between"
-              style={{ width: '8.5in', height: '13in', boxSizing: 'border-box' }}
-            >
-              <div>
-                <div className="text-[9px] font-serif italic mb-1 flex justify-between">
-                  <span>Civil Service Form No. 6<br />Revised 2020</span>
-                </div>
-
-                <div className="relative flex items-center justify-between mb-1.5 pb-1">
-                  <img
-                    src={maguindanaoLogo}
-                    alt="Province of Maguindanao del Norte"
-                    className="w-16 h-16 object-contain shrink-0"
-                  />
-                  <div className="text-center flex-1 px-2">
-                    <div className="text-[10px] font-medium uppercase tracking-wide">Republic of the Philippines</div>
-                    <div className="text-[12.5px] font-bold uppercase tracking-wider text-slate-900">
-                      PROVINCIAL GOVERNMENT OF MAGUINDANAO DEL NORTE
-                    </div>
-                    <div className="text-[9.5px] text-slate-700">
-                      Provincial Government Satellite Office, Sinsuat Avenue, Cotabato City
-                    </div>
-                    <div className="text-[14px] font-extrabold uppercase mt-0.5 tracking-widest border-b-2 border-black inline-block px-3 pb-0.5">
-                      APPLICATION FOR LEAVE
-                    </div>
-                  </div>
-                  <img
-                    src={bangsamoroLogo}
-                    alt="Bangsamoro Autonomous Region in Muslim Mindanao"
-                    className="w-16 h-16 object-contain shrink-0"
-                  />
-                </div>
-
-                <table className="w-full border-2 border-black border-collapse text-[10px]">
-                  <tbody>
-                    <tr className="border-b border-black">
-                      <td className="w-1/2 border-r border-black p-1 align-top">
-                        <span className="font-bold">1. OFFICE/DEPARTMENT:</span>
-                        <div className="font-semibold text-slate-900 uppercase mt-0.5 pl-2">{employee.department || 'General'}</div>
-                      </td>
-                      <td className="w-1/2 p-1 align-top">
-                        <span className="font-bold">2. NAME :</span>
-                        <div className="font-semibold text-slate-900 uppercase mt-0.5 pl-2 tracking-wide">{employee.name}</div>
-                      </td>
-                    </tr>
-                    <tr className="border-b-2 border-black">
-                      <td className="border-r border-black p-1 align-top">
-                        <div className="flex justify-between items-center">
-                          <span className="font-bold">3. DATE OF FILING:</span>
-                          <span className="font-semibold text-slate-900 pl-1">{filingDate}</span>
-                        </div>
-                      </td>
-                      <td className="p-1 align-top">
-                        <div className="grid grid-cols-2 gap-2">
-                          <div>
-                            <span className="font-bold">4. POSITION:</span>
-                            <div className="font-semibold text-slate-900 uppercase mt-0.5">{employee.position || 'Staff'}</div>
-                          </div>
-                          <div>
-                            <span className="font-bold">5. SALARY:</span>
-                            <div className="font-semibold text-slate-900 mt-0.5">{salary || '_______________'}</div>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                <div className="border-x-2 border-b-2 border-black bg-slate-200 text-center font-bold text-[10.5px] py-0.5 tracking-wide uppercase">
-                  6. DETAILS OF APPLICATION
-                </div>
-
-                <table className="w-full border-x-2 border-b border-black border-collapse text-[9.5px]">
-                  <tbody>
-                    <tr className="divide-x border-black">
-                      <td className="w-1/2 p-1.5 align-top space-y-1 border-r border-black">
-                        <div className="font-bold text-[10px] mb-0.5">6.A TYPE OF LEAVE TO BE AVAILED OF</div>
-                        <LeaveCheckbox label="Vacation Leave (Sec. 51, Rule XVI, Omnibus Rules Implementing E.O. No. 292)" checked={leave.type_name === 'Vacation Leave'} />
-                        <LeaveCheckbox label="Mandatory/Forced Leave (Sec. 25, Rule XVI, Omnibus Rules Implementing E.O. No. 292)" checked={leave.type_name?.toLowerCase().includes('forced')} />
-                        <LeaveCheckbox label="Sick Leave (Sec. 43, Rule XVI, Omnibus Rules Implementing E.O. No. 292)" checked={leave.type_name === 'Sick Leave'} />
-                        <LeaveCheckbox label="Maternity Leave (R.A. No. 11210 / IRR issued by CSC, DOLE and SSS)" checked={leave.type_name?.toLowerCase().includes('maternity')} />
-                        <LeaveCheckbox label="Paternity Leave (R.A. No. 8187 / CSC MC No. 71, s. 1998, as amended)" checked={leave.type_name?.toLowerCase().includes('paternity')} />
-                        <LeaveCheckbox label="Special Privilege Leave (Sec. 21, Rule XVI, Omnibus Rules Implementing E.O. No. 292)" checked={leave.type_name?.toLowerCase().includes('special privilege')} />
-                        <LeaveCheckbox label="Solo Parent Leave (RA No. 8972 / CSC MC No. 8, s. 2004)" checked={leave.type_name?.toLowerCase().includes('solo parent')} />
-                        <LeaveCheckbox label="Study Leave (Sec. 68, Rule XVI, Omnibus Rules Implementing E.O. No. 292)" checked={leave.type_name?.toLowerCase().includes('study')} />
-                        <LeaveCheckbox label="10-Day VAWC Leave (RA No. 9262 / CSC MC No. 15, s. 2005)" checked={leave.type_name?.toLowerCase().includes('vawc')} />
-                        <LeaveCheckbox label="Rehabilitation Privilege (Sec. 55, Rule XVI, Omnibus Rules Implementing E.O. No. 292)" checked={leave.type_name?.toLowerCase().includes('rehabilitation')} />
-                        <LeaveCheckbox label="Special Leave Benefits for Women (RA No. 9710 / CSC MC No. 25, s. 2010)" checked={leave.type_name?.toLowerCase().includes('women')} />
-                        <LeaveCheckbox label="Special Emergency (Calamity) Leave (CSC MC No. 2, s. 2012, as amended)" checked={leave.type_name?.toLowerCase().includes('calamity')} />
-                        <LeaveCheckbox label="Adoption Leave (R.A. No. 8552)" checked={leave.type_name?.toLowerCase().includes('adoption')} />
-                      </td>
-
-                      <td className="w-1/2 p-1.5 align-top text-[9.5px] space-y-1.5">
-                        <div className="font-bold text-[10px]">6.B DETAILS OF LEAVE</div>
-                        <div>
-                          <div className="font-semibold italic">In case of Vacation/Special Privilege Leave:</div>
-                          <div className="pl-3 space-y-0.5 mt-0.5">
-                            <div className="flex items-center gap-1.5">
-                              <span className="font-mono text-xs">{vacationLoc === 'philippines' ? '[✓]' : '[  ]'}</span>
-                              <span>Within the Philippines:</span>
-                              <span className="border-b border-black flex-1 pl-1 font-semibold">{vacationLoc === 'philippines' ? vacationLocDetail : ''}</span>
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                              <span className="font-mono text-xs">{vacationLoc === 'abroad' ? '[✓]' : '[  ]'}</span>
-                              <span>Abroad (Specify):</span>
-                              <span className="border-b border-black flex-1 pl-1 font-semibold">{vacationLoc === 'abroad' ? vacationLocDetail : ''}</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div>
-                          <div className="font-semibold italic">In case of Sick Leave:</div>
-                          <div className="pl-3 space-y-0.5 mt-0.5">
-                            <div className="flex items-center gap-1.5">
-                              <span className="font-mono text-xs">{sickType === 'hospital' ? '[✓]' : '[  ]'}</span>
-                              <span>In Hospital (Specify Illness):</span>
-                              <span className="border-b border-black flex-1 pl-1 font-semibold">{sickType === 'hospital' ? sickDetail : ''}</span>
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                              <span className="font-mono text-xs">{sickType === 'outpatient' ? '[✓]' : '[  ]'}</span>
-                              <span>Out Patient (Specify Illness):</span>
-                              <span className="border-b border-black flex-1 pl-1 font-semibold">{sickType === 'outpatient' ? sickDetail : ''}</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div>
-                          <div className="font-semibold italic">In case of Special Leave Benefits for Women:</div>
-                          <div className="pl-3 flex items-center gap-1.5 mt-0.5">
-                            <span>(Specify Illness):</span>
-                            <span className="border-b border-black flex-1 pl-1 font-semibold">{womenIllness}</span>
-                          </div>
-                        </div>
-
-                        <div>
-                          <div className="font-semibold italic">In case of Study Leave:</div>
-                          <div className="pl-3 space-y-0.5 mt-0.5">
-                            <div className="flex items-center gap-1.5">
-                              <span className="font-mono text-xs">{studyPurpose === 'masters' ? '[✓]' : '[  ]'}</span>
-                              <span>Completion of Master's Degree</span>
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                              <span className="font-mono text-xs">{studyPurpose === 'bar' ? '[✓]' : '[  ]'}</span>
-                              <span>BAR/Board Examination Review</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div>
-                          <div className="font-semibold italic">Other purpose:</div>
-                          <div className="pl-3 space-y-0.5 mt-0.5">
-                            <div className="flex items-center gap-1.5">
-                              <span className="font-mono text-xs">{otherPurpose === 'monetization' ? '[✓]' : '[  ]'}</span>
-                              <span>Monetization of Leave Credits</span>
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                              <span className="font-mono text-xs">{otherPurpose === 'terminal' ? '[✓]' : '[  ]'}</span>
-                              <span>Terminal Leave</span>
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                <table className="w-full border-x-2 border-b-2 border-black border-collapse text-[9.5px]">
-                  <tbody>
-                    <tr className="border-b border-black">
-                      <td className="w-1/2 p-2 border-r border-black align-top">
-                        <div className="flex flex-col justify-between h-full space-y-2">
-                          <div>
-                            <div className="font-bold">6.C NUMBER OF WORKING DAYS APPLIED FOR</div>
-                            <div className="mt-1 pl-4 border-b border-black pb-0.5">
-                              <span className="font-bold text-[11px] text-slate-950 tracking-wide">
-                                {leave.days} DAY{leave.days > 1 ? 'S' : ''}
-                              </span>
-                            </div>
-                          </div>
-                          <div>
-                            <div className="font-bold">INCLUSIVE DATES:</div>
-                            <div className="mt-1 pl-4 border-b border-black pb-0.5">
-                              <span className="font-semibold text-[10.5px] text-slate-950 tracking-wide">
-                                {formatDate(leave.start_date)} to {formatDate(leave.end_date)}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-
-                      <td className="w-1/2 p-2 align-top">
-                        <div className="flex flex-col justify-between h-full min-h-[85px]">
-                          <div>
-                            <div className="font-bold">6.D COMMUTATION</div>
-                            <div className="pl-4 space-y-1 mt-1">
-                              <div className="flex items-center gap-2">
-                                <span className="font-mono text-xs">{commutation === 'not_requested' ? '[✓]' : '[  ]'}</span>
-                                <span>Not Requested</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <span className="font-mono text-xs">{commutation === 'requested' ? '[✓]' : '[  ]'}</span>
-                                <span>Requested</span>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="mt-4 mb-0.5 text-center">
-                            <div className="w-56 mx-auto border-b border-black mb-1">
-                              <span className="font-bold text-[10.5px] uppercase tracking-wide text-slate-950">
-                                {employee.name}
-                              </span>
-                            </div>
-                            <span className="text-[8.5px] text-slate-600 uppercase tracking-wider">(Signature of Applicant)</span>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                <div className="border-x-2 border-b-2 border-black bg-slate-200 text-center font-bold text-[10.5px] py-0.5 tracking-wider uppercase">
-                  7. DETAILS OF ACTION ON APPLICATION
-                </div>
-
-                <table className="w-full border-x-2 border-b-2 border-black border-collapse text-[9.5px]">
-                  <tbody>
-                    <tr>
-                      <td className="w-1/2 p-2 align-top border-r border-black">
-                        <div className="flex flex-col justify-between h-full">
-                          <div>
-                            <div className="font-bold">7.A CERTIFICATION OF LEAVE CREDITS</div>
-                            <div className="italic text-[9px] mt-0.5 mb-1.5">
-                              As of <span className="font-semibold underline">{asOfDate}</span>
-                            </div>
-                            <table className="w-full border border-black border-collapse text-center text-[9px] mb-1.5">
-                              <thead>
-                                <tr className="bg-slate-100 border-b border-black">
-                                  <th className="border-r border-black p-1 text-left" />
-                                  <th className="border-r border-black p-1 font-bold">Vacation Leave</th>
-                                  <th className="p-1 font-bold">Sick Leave</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <tr className="border-b border-black">
-                                  <td className="border-r border-black p-1 text-left font-medium">Total Earned</td>
-                                  <td className="border-r border-black p-1 font-mono">{vlTotal.toFixed(3)}</td>
-                                  <td className="p-1 font-mono">{slTotal.toFixed(3)}</td>
-                                </tr>
-                                <tr className="border-b border-black">
-                                  <td className="border-r border-black p-1 text-left font-medium">Less this application</td>
-                                  <td className="border-r border-black p-1 font-mono">{vlLess > 0 ? vlLess.toFixed(3) : '–'}</td>
-                                  <td className="p-1 font-mono">{slLess > 0 ? slLess.toFixed(3) : '–'}</td>
-                                </tr>
-                                <tr className="font-bold bg-slate-50">
-                                  <td className="border-r border-black p-1 text-left">Balance</td>
-                                  <td className="border-r border-black p-1 font-mono">{vlRemaining.toFixed(3)}</td>
-                                  <td className="p-1 font-mono">{slRemaining.toFixed(3)}</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-
-                          <div className="mt-4 mb-0.5 text-center">
-                            <div className="w-56 mx-auto border-b border-black mb-1">
-                              <span className="font-bold text-[10.5px] uppercase tracking-wide">
-                                {activeCert.name || '_______________________________'}
-                              </span>
-                            </div>
-                            <div className="text-[9.5px] font-semibold text-slate-900 uppercase">{activeCert.position}</div>
-                            <div className="text-[8.5px] text-slate-600 uppercase tracking-wider">(Authorized Officer)</div>
-                          </div>
-                        </div>
-                      </td>
-
-                      <td className="w-1/2 p-2 align-top">
-                        <div className="flex flex-col justify-between h-full">
-                          <div>
-                            <div className="font-bold">7.B RECOMMENDATION</div>
-                            <div className="pl-3 space-y-1 mt-1">
-                              <div className="flex items-center gap-2">
-                                <span className="font-mono text-xs">{leave.status === 'approved' || leave.status === 'pending' ? '[✓]' : '[  ]'}</span>
-                                <span>For approval</span>
-                              </div>
-                              <div className="flex items-start gap-2">
-                                <span className="font-mono text-xs">{leave.status === 'rejected' ? '[✓]' : '[  ]'}</span>
-                                <div className="flex-1">
-                                  <span>For disapproval due to:</span>
-                                  <div className="border-b border-black w-full mt-1.5" />
-                                  <div className="border-b border-black w-full mt-2" />
-                                  <div className="border-b border-black w-full mt-2" />
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="mt-4 mb-0.5 text-center">
-                            <div className="w-56 mx-auto border-b border-black mb-1">
-                              <span className="font-bold text-[10.5px] uppercase tracking-wide">
-                                {activeSup.name || '_______________________________'}
-                              </span>
-                            </div>
-                            <div className="text-[9.5px] font-semibold text-slate-900 uppercase">{activeSup.position}</div>
-                            <div className="text-[8.5px] text-slate-600 uppercase tracking-wider">(Immediate Supervisor)</div>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                <table className="w-full border-x-2 border-b-2 border-black border-collapse text-[9.5px]">
-                  <tbody>
-                    <tr className="border-b border-black">
-                      <td className="w-1/2 p-2 border-r border-black align-top">
-                        <div className="font-bold">7.C APPROVED FOR:</div>
-                        <div className="pl-4 space-y-1 mt-1">
-                          <div className="flex items-center gap-2">
-                            <span className="border-b border-black min-w-[36px] text-center font-bold">
-                              {leave.status === 'approved' ? leave.days : '____'}
-                            </span>
-                            <span>days with pay</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="border-b border-black min-w-[36px] text-center font-bold">____</span>
-                            <span>days without pay</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="border-b border-black min-w-[36px] text-center font-bold">____</span>
-                            <span>others (Specify)</span>
-                          </div>
-                        </div>
-                      </td>
-
-                      <td className="w-1/2 p-2 align-top">
-                        <div className="font-bold">7.D DISAPPROVED DUE TO:</div>
-                        <div className="pl-4 mt-1 space-y-2.5">
-                          <div className="border-b border-black w-full" />
-                          <div className="border-b border-black w-full" />
-                          <div className="border-b border-black w-full" />
-                        </div>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td colSpan={2} className="py-3 px-3 text-center bg-slate-50/40">
-                        <div className="w-80 mx-auto border-b-2 border-black mb-1">
-                          <span className="font-extrabold text-[12px] uppercase tracking-wider text-slate-950">
-                            {appName || '_______________________________'}
-                          </span>
-                        </div>
-                        <div className="text-[10.5px] font-bold text-slate-900 uppercase tracking-wide">
-                          {appPosition || 'Provincial Governor'}
-                        </div>
-                        <div className="text-[8.5px] text-slate-600 uppercase tracking-wider mt-0.5">
-                          (Authorized Official)
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+        <div className="cs-form-printable flex flex-col gap-10 items-center print:block" style={{ width: '8.5in' }}>
+          {/* Sheet 1 */}
+          <div
+            className="cs-page cs-page-1 p-6 text-[10px] leading-[1.28] text-black bg-white shadow-2xl flex flex-col justify-between"
+            style={{ width: '8.5in', height: '13in', boxSizing: 'border-box' }}
+          >
+            <div>
+              <div className="text-[9px] font-serif italic mb-1 flex justify-between">
+                <span>Civil Service Form No. 6<br />Revised 2020</span>
               </div>
-            </div>
 
-            {/* Sheet 2 - CSC Form No. 6 Back Page (Instructions and Requirements) */}
-            <div
-              className="cs-page cs-page-2 p-8 text-[8pt] leading-[1.28] text-black bg-white shadow-2xl flex flex-col justify-between"
-              style={{ width: '8.5in', height: '13in', boxSizing: 'border-box' }}
-            >
-              <div className="flex flex-col justify-between h-full">
-                <div>
-                  {/* Header Box */}
-                  <div className="border border-black py-1 px-4 mb-2.5">
-                    <h2 className="text-center font-bold text-[10.5pt] tracking-wider uppercase text-black">
-                      INSTRUCTIONS AND REQUIREMENTS
-                    </h2>
+              <div className="relative flex items-center justify-between mb-1.5 pb-1">
+                <img
+                  src={maguindanaoLogo}
+                  alt="Province of Maguindanao del Norte"
+                  className="w-16 h-16 object-contain shrink-0"
+                />
+                <div className="text-center flex-1 px-2">
+                  <div className="text-[10px] font-medium uppercase tracking-wide">Republic of the Philippines</div>
+                  <div className="text-[12.5px] font-bold uppercase tracking-wider text-slate-900">
+                    PROVINCIAL GOVERNMENT OF MAGUINDANAO DEL NORTE
                   </div>
+                  <div className="text-[9.5px] text-slate-700">
+                    Provincial Government Satellite Office, Sinsuat Avenue, Cotabato City
+                  </div>
+                  <div className="text-[14px] font-extrabold uppercase mt-0.5 tracking-widest border-b-2 border-black inline-block px-3 pb-0.5">
+                    APPLICATION FOR LEAVE
+                  </div>
+                </div>
+                <img
+                  src={bangsamoroLogo}
+                  alt="Bangsamoro Autonomous Region in Muslim Mindanao"
+                  className="w-16 h-16 object-contain shrink-0"
+                />
+              </div>
 
-                  <p className="mb-2 text-justify text-[8pt]">
-                    Application for any type of leave shall be made on this Form and <span className="underline font-semibold">to be accomplished at least in duplicate</span> with documentary requirements, as follows:
-                  </p>
+              <table className="w-full border-2 border-black border-collapse text-[10px]">
+                <tbody>
+                  <tr className="border-b border-black">
+                    <td colSpan={2} className="w-1/2 border-r border-black p-1 align-top">
+                      <span className="font-bold">1. OFFICE/DEPARTMENT:</span>
+                      <div className="font-semibold text-slate-900 uppercase mt-0.5 pl-2">{employee.department || 'General'}</div>
+                    </td>
+                    <td colSpan={2} className="w-1/2 p-1 align-top">
+                      <span className="font-bold">2. NAME :</span>
+                      <div className="font-semibold text-slate-900 uppercase mt-0.5 pl-2 tracking-wide">{employee.name}</div>
+                    </td>
+                  </tr>
+                  <tr className="border-b-2 border-black">
+                    <td colSpan={2} className="w-1/2 border-r border-black p-1 align-top">
+                      <span className="font-bold">3. DATE OF FILING:</span>
+                      <div className="font-semibold text-slate-900 mt-0.5 pl-2">{filingDate}</div>
+                    </td>
+                    <td className="w-1/4 border-r border-black p-1 align-top">
+                      <span className="font-bold">4. POSITION:</span>
+                      <div className="font-semibold text-slate-900 uppercase mt-0.5 pl-2">{employee.position || 'Staff'}</div>
+                    </td>
+                    <td className="w-1/4 p-1 align-top">
+                      <span className="font-bold">5. SALARY:</span>
+                      <div className="font-semibold text-slate-900 mt-0.5 pl-2">{salary || '_______________'}</div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
 
-                  <div className="grid grid-cols-2 gap-x-5 gap-y-2 text-justify text-[7.5pt] leading-[1.24]">
-                    {/* Column 1: Items 1 to 9 */}
-                    <div className="space-y-1.5">
+              <div className="border-x-2 border-b-2 border-black bg-slate-200 text-center font-bold text-[10.5px] py-0.5 tracking-wide uppercase">
+                6. DETAILS OF APPLICATION
+              </div>
+
+              <table className="w-full border-x-2 border-b border-black border-collapse text-[9.5px]">
+                <tbody>
+                  <tr className="divide-x border-black">
+                    <td className="w-1/2 p-1.5 align-top space-y-1 border-r border-black">
+                      <div className="font-bold text-[10px] mb-0.5">6.A TYPE OF LEAVE TO BE AVAILED OF</div>
+                      <LeaveCheckbox label="Vacation Leave (Sec. 51, Rule XVI, Omnibus Rules Implementing E.O. No. 292)" checked={leave.type_name === 'Vacation Leave'} />
+                      <LeaveCheckbox label="Mandatory/Forced Leave (Sec. 25, Rule XVI, Omnibus Rules Implementing E.O. No. 292)" checked={leave.type_name?.toLowerCase().includes('forced')} />
+                      <LeaveCheckbox label="Sick Leave (Sec. 43, Rule XVI, Omnibus Rules Implementing E.O. No. 292)" checked={leave.type_name === 'Sick Leave'} />
+                      <LeaveCheckbox label="Maternity Leave (R.A. No. 11210 / IRR issued by CSC, DOLE and SSS)" checked={leave.type_name?.toLowerCase().includes('maternity')} />
+                      <LeaveCheckbox label="Paternity Leave (R.A. No. 8187 / CSC MC No. 71, s. 1998, as amended)" checked={leave.type_name?.toLowerCase().includes('paternity')} />
+                      <LeaveCheckbox label="Special Privilege Leave (Sec. 21, Rule XVI, Omnibus Rules Implementing E.O. No. 292)" checked={leave.type_name?.toLowerCase().includes('special privilege')} />
+                      <LeaveCheckbox label="Solo Parent Leave (RA No. 8972 / CSC MC No. 8, s. 2004)" checked={leave.type_name?.toLowerCase().includes('solo parent')} />
+                      <LeaveCheckbox label="Study Leave (Sec. 68, Rule XVI, Omnibus Rules Implementing E.O. No. 292)" checked={leave.type_name?.toLowerCase().includes('study')} />
+                      <LeaveCheckbox label="10-Day VAWC Leave (RA No. 9262 / CSC MC No. 15, s. 2005)" checked={leave.type_name?.toLowerCase().includes('vawc')} />
+                      <LeaveCheckbox label="Rehabilitation Privilege (Sec. 55, Rule XVI, Omnibus Rules Implementing E.O. No. 292)" checked={leave.type_name?.toLowerCase().includes('rehabilitation')} />
+                      <LeaveCheckbox label="Special Leave Benefits for Women (RA No. 9710 / CSC MC No. 25, s. 2010)" checked={leave.type_name?.toLowerCase().includes('women')} />
+                      <LeaveCheckbox label="Special Emergency (Calamity) Leave (CSC MC No. 2, s. 2012, as amended)" checked={leave.type_name?.toLowerCase().includes('calamity')} />
+                      <LeaveCheckbox label="Adoption Leave (R.A. No. 8552)" checked={leave.type_name?.toLowerCase().includes('adoption')} />
+                    </td>
+
+                    <td className="w-1/2 p-1.5 align-top text-[9.5px] space-y-1.5">
+                      <div className="font-bold text-[10px]">6.B DETAILS OF LEAVE</div>
                       <div>
-                        <span className="font-bold">1. Vacation leave*</span>
-                        <p className="mt-0.5">
-                          It shall be filed five (5) days in advance, whenever possible, of the effective date of such leave. Vacation leave within the Philippines or abroad shall be indicated in the form for purposes of securing travel authority and completing clearance from money and work accountabilities.
-                        </p>
+                        <div className="font-semibold italic">In case of Vacation/Special Privilege Leave:</div>
+                        <div className="pl-3 space-y-0.5 mt-0.5">
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-mono text-xs">{vacationLoc === 'philippines' ? '[✓]' : '[  ]'}</span>
+                            <span>Within the Philippines:</span>
+                            <span className="border-b border-black flex-1 pl-1 font-semibold">{vacationLoc === 'philippines' ? vacationLocDetail : ''}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-mono text-xs">{vacationLoc === 'abroad' ? '[✓]' : '[  ]'}</span>
+                            <span>Abroad (Specify):</span>
+                            <span className="border-b border-black flex-1 pl-1 font-semibold">{vacationLoc === 'abroad' ? vacationLocDetail : ''}</span>
+                          </div>
+                        </div>
                       </div>
 
                       <div>
-                        <span className="font-bold">2. Mandatory/Forced leave</span>
-                        <p className="mt-0.5">
-                          Annual five-day vacation leave shall be forfeited if not taken during the year. In case the scheduled leave has been cancelled in the exigency of the service by the head of agency, it shall no longer be deducted from the accumulated vacation leave. Availment of one (1) day or more Vacation Leave (VL) shall be considered for complying the mandatory/forced leave subject to the conditions under Section 25, Rule XVI of the Omnibus Rules Implementing E.O. No. 292.
-                        </p>
+                        <div className="font-semibold italic">In case of Sick Leave:</div>
+                        <div className="pl-3 space-y-0.5 mt-0.5">
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-mono text-xs">{sickType === 'hospital' ? '[✓]' : '[  ]'}</span>
+                            <span>In Hospital (Specify Illness):</span>
+                            <span className="border-b border-black flex-1 pl-1 font-semibold">{sickType === 'hospital' ? sickDetail : ''}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-mono text-xs">{sickType === 'outpatient' ? '[✓]' : '[  ]'}</span>
+                            <span>Out Patient (Specify Illness):</span>
+                            <span className="border-b border-black flex-1 pl-1 font-semibold">{sickType === 'outpatient' ? sickDetail : ''}</span>
+                          </div>
+                        </div>
                       </div>
 
                       <div>
-                        <span className="font-bold">3. Sick leave*</span>
-                        <ul className="list-disc pl-3.5 space-y-0.5 mt-0.5">
-                          <li>It shall be filed immediately upon employee&apos;s return from such leave.</li>
-                          <li>If filed in advance or exceeding five (5) days, application shall be accompanied by a medical certificate. In case medical consultation was not availed of, an affidavit should be executed by an applicant.</li>
-                        </ul>
+                        <div className="font-semibold italic">In case of Special Leave Benefits for Women:</div>
+                        <div className="pl-3 flex items-center gap-1.5 mt-0.5">
+                          <span>(Specify Illness):</span>
+                          <span className="border-b border-black flex-1 pl-1 font-semibold">{womenIllness}</span>
+                        </div>
                       </div>
 
                       <div>
-                        <span className="font-bold">4. Maternity leave* – 105 days</span>
-                        <ul className="list-disc pl-3.5 space-y-0.5 mt-0.5">
-                          <li>Proof of pregnancy e.g. ultrasound, doctor&apos;s certificate on the expected date of delivery</li>
-                          <li>Accomplished Notice of Allocation of Maternity Leave Credits (CS Form No. 6a), if needed</li>
-                          <li>Seconded female employees shall enjoy maternity leave with full pay in the recipient agency.</li>
-                        </ul>
+                        <div className="font-semibold italic">In case of Study Leave:</div>
+                        <div className="pl-3 space-y-0.5 mt-0.5">
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-mono text-xs">{studyPurpose === 'masters' ? '[✓]' : '[  ]'}</span>
+                            <span>Completion of Master's Degree</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-mono text-xs">{studyPurpose === 'bar' ? '[✓]' : '[  ]'}</span>
+                            <span>BAR/Board Examination Review</span>
+                          </div>
+                        </div>
                       </div>
 
                       <div>
-                        <span className="font-bold">5. Paternity leave – 7 days</span>
-                        <p className="mt-0.5">
-                          Proof of child&apos;s delivery e.g. birth certificate, medical certificate and marriage contract
-                        </p>
+                        <div className="font-semibold italic">Other purpose:</div>
+                        <div className="pl-3 space-y-0.5 mt-0.5">
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-mono text-xs">{otherPurpose === 'monetization' ? '[✓]' : '[  ]'}</span>
+                            <span>Monetization of Leave Credits</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-mono text-xs">{otherPurpose === 'terminal' ? '[✓]' : '[  ]'}</span>
+                            <span>Terminal Leave</span>
+                          </div>
+                        </div>
                       </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
 
-                      <div>
-                        <span className="font-bold">6. Special Privilege leave – 3 days</span>
-                        <p className="mt-0.5">
-                          It shall be filed/approved for at least one (1) week prior to availment, except on emergency cases. Special privilege leave within the Philippines or abroad shall be indicated in the form for purposes of securing travel authority and completing clearance from money and work accountabilities.
-                        </p>
+              <table className="w-full border-x-2 border-b-2 border-black border-collapse text-[9.5px]">
+                <tbody>
+                  <tr className="border-b border-black">
+                    <td className="w-1/2 p-2 border-r border-black align-top">
+                      <div className="flex flex-col justify-between h-full space-y-2">
+                        <div>
+                          <div className="font-bold">6.C NUMBER OF WORKING DAYS APPLIED FOR</div>
+                          <div className="mt-1 pl-4 border-b border-black pb-0.5">
+                            <span className="font-bold text-[11px] text-slate-950 tracking-wide">
+                              {leave.days} DAY{leave.days > 1 ? 'S' : ''}
+                            </span>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="font-bold">INCLUSIVE DATES:</div>
+                          <div className="mt-1 pl-4 border-b border-black pb-0.5">
+                            <span className="font-semibold text-[10.5px] text-slate-950 tracking-wide">
+                              {formatDate(leave.start_date)} to {formatDate(leave.end_date)}
+                            </span>
+                          </div>
+                        </div>
                       </div>
+                    </td>
 
-                      <div>
-                        <span className="font-bold">7. Solo Parent leave – 7 days</span>
-                        <p className="mt-0.5">
-                          It shall be filed in advance or whenever possible five (5) days before going on such leave with updated Solo Parent Identification Card.
-                        </p>
-                      </div>
-
-                      <div>
-                        <span className="font-bold">8. Study leave* – up to 6 months</span>
-                        <ul className="list-disc pl-3.5 space-y-0.5 mt-0.5">
-                          <li>Shall meet the agency&apos;s internal requirements, if any;</li>
-                          <li>Contract between the agency head or authorized representative and the employee concerned.</li>
-                        </ul>
-                      </div>
-
-                      <div>
-                        <span className="font-bold">9. VAWC leave – 10 days</span>
-                        <ul className="list-disc pl-3.5 space-y-0.5 mt-0.5">
-                          <li>It shall be filed in advance or immediately upon the woman employee&apos;s return from such leave.</li>
-                          <li>
-                            It shall be accompanied by any of the following supporting documents:
-                            <div className="pl-1.5 space-y-0.5 mt-0.5">
-                              <p>a. Barangay Protection Order (BPO) obtained from the barangay;</p>
-                              <p>b. Temporary/Permanent Protection Order (TPO/PPO) obtained from the court;</p>
-                              <p>c. If the protection order is not yet issued by the barangay or the court, a certification issued by the Punong Barangay/Kagawad or Prosecutor or the Clerk of Court that the application for the BPO, TPO or PPO has been filed with the said office shall be sufficient to support the application for the ten-day leave; or</p>
-                              <p>d. In the absence of the BPO/TPO/PPO or the certification, a police report specifying the details of the occurrence of violence on the victim and a medical certificate may be considered, at the discretion of the immediate supervisor of the woman employee concerned.</p>
+                    <td className="w-1/2 p-2 align-top">
+                      <div className="flex flex-col justify-between h-full min-h-[85px]">
+                        <div>
+                          <div className="font-bold">6.D COMMUTATION</div>
+                          <div className="pl-4 space-y-1 mt-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono text-xs">{commutation === 'not_requested' ? '[✓]' : '[  ]'}</span>
+                              <span>Not Requested</span>
                             </div>
-                          </li>
-                        </ul>
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono text-xs">{commutation === 'requested' ? '[✓]' : '[  ]'}</span>
+                              <span>Requested</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="mt-4 mb-0.5 text-center">
+                          <div className="w-56 mx-auto border-b border-black mb-1">
+                            <span className="font-bold text-[10.5px] uppercase tracking-wide text-slate-950">
+                              {employee.name}
+                            </span>
+                          </div>
+                          <span className="text-[8.5px] text-slate-600 uppercase tracking-wider">(Signature of Applicant)</span>
+                        </div>
                       </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div className="border-x-2 border-b-2 border-black bg-slate-200 text-center font-bold text-[10.5px] py-0.5 tracking-wider uppercase">
+                7. DETAILS OF ACTION ON APPLICATION
+              </div>
+
+              <table className="w-full border-x-2 border-b-2 border-black border-collapse text-[9.5px]">
+                <tbody>
+                  <tr>
+                    <td className="w-1/2 p-2 align-top border-r border-black">
+                      <div className="flex flex-col justify-between h-full">
+                        <div>
+                          <div className="font-bold">7.A CERTIFICATION OF LEAVE CREDITS</div>
+                          <div className="italic text-[9px] mt-0.5 mb-1.5">
+                            As of <span className="font-semibold underline">{asOfDate}</span>
+                          </div>
+                          <table className="w-full border border-black border-collapse text-center text-[9px] mb-1.5">
+                            <thead>
+                              <tr className="bg-slate-100 border-b border-black">
+                                <th className="border-r border-black p-1 text-left" />
+                                <th className="border-r border-black p-1 font-bold">Vacation Leave</th>
+                                <th className="p-1 font-bold">Sick Leave</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr className="border-b border-black">
+                                <td className="border-r border-black p-1 text-left font-medium">Total Earned</td>
+                                <td className="border-r border-black p-1 font-mono">{vlTotal.toFixed(3)}</td>
+                                <td className="p-1 font-mono">{slTotal.toFixed(3)}</td>
+                              </tr>
+                              <tr className="border-b border-black">
+                                <td className="border-r border-black p-1 text-left font-medium">Less this application</td>
+                                <td className="border-r border-black p-1 font-mono">{vlLess > 0 ? vlLess.toFixed(3) : '–'}</td>
+                                <td className="p-1 font-mono">{slLess > 0 ? slLess.toFixed(3) : '–'}</td>
+                              </tr>
+                              <tr className="font-bold bg-slate-50">
+                                <td className="border-r border-black p-1 text-left">Balance</td>
+                                <td className="border-r border-black p-1 font-mono">{vlRemaining.toFixed(3)}</td>
+                                <td className="p-1 font-mono">{slRemaining.toFixed(3)}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+
+                        <div className="mt-8 mb-0.5 text-center">
+                          <div className="w-56 mx-auto border-b border-black mb-1">
+                            <span className="font-bold text-[10.5px] uppercase tracking-wide">
+                              {activeCert.name || '_______________________________'}
+                            </span>
+                          </div>
+                          <div className="text-[9.5px] font-semibold text-slate-900 uppercase">{activeCert.position}</div>
+                          <div className="text-[8.5px] text-slate-600 uppercase tracking-wider">(Authorized Officer)</div>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td className="w-1/2 p-2 align-top">
+                      <div className="flex flex-col justify-between h-full">
+                        <div>
+                          <div className="font-bold">7.B RECOMMENDATION</div>
+                          <div className="pl-3 space-y-1 mt-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono text-xs">{leave.status === 'approved' || leave.status === 'pending' ? '[✓]' : '[  ]'}</span>
+                              <span>For approval</span>
+                            </div>
+                            <div className="flex items-start gap-2">
+                              <span className="font-mono text-xs">{leave.status === 'rejected' ? '[✓]' : '[  ]'}</span>
+                              <div className="flex-1">
+                                <span>For disapproval due to:</span>
+                                <div className="border-b border-black w-full mt-1.5" />
+                                <div className="border-b border-black w-full mt-2" />
+                                <div className="border-b border-black w-full mt-2" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="mt-8 mb-0.5 text-center">
+                          <div className="w-56 mx-auto border-b border-black mb-1">
+                            <span className="font-bold text-[10.5px] uppercase tracking-wide">
+                              {activeSup.name || '_______________________________'}
+                            </span>
+                          </div>
+                          <div className="text-[9.5px] font-semibold text-slate-900 uppercase">{activeSup.position}</div>
+                          <div className="text-[8.5px] text-slate-600 uppercase tracking-wider">(Immediate Supervisor)</div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <table className="w-full border-x-2 border-b-2 border-black border-collapse text-[9.5px]">
+                <tbody>
+                  <tr className="border-b border-black">
+                    <td className="w-1/2 p-2 border-r border-black align-top">
+                      <div className="font-bold">7.C APPROVED FOR:</div>
+                      <div className="pl-4 space-y-1 mt-1">
+                        <div className="flex items-center gap-2">
+                          <span className="border-b border-black min-w-[36px] text-center font-bold">
+                            {leave.status === 'approved' ? leave.days : '____'}
+                          </span>
+                          <span>days with pay</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="border-b border-black min-w-[36px] text-center font-bold">____</span>
+                          <span>days without pay</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="border-b border-black min-w-[36px] text-center font-bold">____</span>
+                          <span>others (Specify)</span>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td className="w-1/2 p-2 align-top">
+                      <div className="font-bold">7.D DISAPPROVED DUE TO:</div>
+                      <div className="pl-4 mt-3.5 space-y-3">
+                        <div className="border-b border-black w-full" />
+                        <div className="border-b border-black w-full" />
+                        <div className="border-b border-black w-full" />
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td colSpan={2} className="pt-9 pb-2.5 px-3 text-center bg-slate-50/40">
+                      <div className="w-80 mx-auto border-b-2 border-black mb-1">
+                        <span className="font-extrabold text-[12px] uppercase tracking-wider text-slate-950">
+                          {appName || '_______________________________'}
+                        </span>
+                      </div>
+                      <div className="text-[10.5px] font-bold text-slate-900 uppercase tracking-wide">
+                        {appPosition || 'Provincial Governor'}
+                      </div>
+                      <div className="text-[8.5px] text-slate-600 uppercase tracking-wider mt-0.5">
+                        (Authorized Official)
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Sheet 2 - CSC Form No. 6 Back Page (Instructions and Requirements) */}
+          <div
+            className="cs-page cs-page-2 p-8 text-[8pt] leading-[1.28] text-black bg-white shadow-2xl flex flex-col justify-between"
+            style={{ width: '8.5in', height: '13in', boxSizing: 'border-box' }}
+          >
+            <div className="flex flex-col justify-between h-full">
+              <div>
+                {/* Header Box */}
+                <div className="border border-black py-1 px-4 mb-2.5">
+                  <h2 className="text-center font-bold text-[10.5pt] tracking-wider uppercase text-black">
+                    INSTRUCTIONS AND REQUIREMENTS
+                  </h2>
+                </div>
+
+                <p className="mb-2 text-justify text-[8pt]">
+                  Application for any type of leave shall be made on this Form and <span className="underline font-semibold">to be accomplished at least in duplicate</span> with documentary requirements, as follows:
+                </p>
+
+                <div className="grid grid-cols-2 gap-x-5 gap-y-2 text-justify text-[7.5pt] leading-[1.24]">
+                  {/* Column 1: Items 1 to 9 */}
+                  <div className="space-y-1.5">
+                    <div>
+                      <span className="font-bold">1. Vacation leave*</span>
+                      <p className="mt-0.5">
+                        It shall be filed five (5) days in advance, whenever possible, of the effective date of such leave. Vacation leave within the Philippines or abroad shall be indicated in the form for purposes of securing travel authority and completing clearance from money and work accountabilities.
+                      </p>
                     </div>
 
-                    {/* Column 2: Items 10 to 15 */}
-                    <div className="space-y-1.5">
-                      <div>
-                        <span className="font-bold">10. Rehabilitation leave* – up to 6 months</span>
-                        <ul className="list-disc pl-3.5 space-y-0.5 mt-0.5">
-                          <li>Application shall be made within one (1) week from the time of the accident except when a longer period is warranted.</li>
-                          <li>Letter request supported by relevant reports such as the police report, if any.</li>
-                          <li>Medical certificate on the nature of the injuries, the course of treatment involved, and the need to undergo rest, recuperation, and rehabilitation, as the case may be.</li>
-                          <li>Written concurrence of a government physician should be obtained relative to the recommendation for rehabilitation if the attending physician is a private practitioner, particularly on the duration of the period of rehabilitation.</li>
-                        </ul>
-                      </div>
+                    <div>
+                      <span className="font-bold">2. Mandatory/Forced leave</span>
+                      <p className="mt-0.5">
+                        Annual five-day vacation leave shall be forfeited if not taken during the year. In case the scheduled leave has been cancelled in the exigency of the service by the head of agency, it shall no longer be deducted from the accumulated vacation leave. Availment of one (1) day or more Vacation Leave (VL) shall be considered for complying the mandatory/forced leave subject to the conditions under Section 25, Rule XVI of the Omnibus Rules Implementing E.O. No. 292.
+                      </p>
+                    </div>
 
-                      <div>
-                        <span className="font-bold">11. Special leave benefits for women* – up to 2 months</span>
-                        <ul className="list-disc pl-3.5 space-y-0.5 mt-0.5">
-                          <li>The application may be filed in advance, that is, at least five (5) days prior to the scheduled date of the gynecological surgery that will be undergone by the employee. In case of emergency, the application for special leave shall be filed immediately upon employee&apos;s return but during confinement the agency shall be notified of said surgery.</li>
-                          <li>The application shall be accompanied by a medical certificate filled out by the proper medical authorities, e.g. the attending surgeon accompanied by a clinical summary reflecting the gynecological disorder which shall be addressed or was addressed by the said surgery; the histopathological report; the operative technique used for the surgery; the duration of the surgery including the peri-operative period (period of confinement around surgery); as well as the employee&apos;s estimated period of recuperation for the same.</li>
-                        </ul>
-                      </div>
+                    <div>
+                      <span className="font-bold">3. Sick leave*</span>
+                      <ul className="list-disc pl-3.5 space-y-0.5 mt-0.5">
+                        <li>It shall be filed immediately upon employee&apos;s return from such leave.</li>
+                        <li>If filed in advance or exceeding five (5) days, application shall be accompanied by a medical certificate. In case medical consultation was not availed of, an affidavit should be executed by an applicant.</li>
+                      </ul>
+                    </div>
 
-                      <div>
-                        <span className="font-bold">12. Special Emergency (Calamity) leave – up to 5 days</span>
-                        <ul className="list-disc pl-3.5 space-y-0.5 mt-0.5">
-                          <li>The special emergency leave can be applied for a maximum of five (5) straight working days or staggered basis within thirty (30) days from the actual occurrence of the natural calamity/disaster. Said privilege shall be enjoyed once a year, not in every instance of calamity or disaster.</li>
-                          <li>The head of office shall take full responsibility for the grant of special emergency leave and verification of the employee&apos;s eligibility to be granted thereof. Said verification shall include: validation of place of residence based on latest available records of the affected employee; verification that the place of residence is covered in the declaration of calamity area by the proper government agency; and such other proofs as may be necessary.</li>
-                        </ul>
-                      </div>
+                    <div>
+                      <span className="font-bold">4. Maternity leave* – 105 days</span>
+                      <ul className="list-disc pl-3.5 space-y-0.5 mt-0.5">
+                        <li>Proof of pregnancy e.g. ultrasound, doctor&apos;s certificate on the expected date of delivery</li>
+                        <li>Accomplished Notice of Allocation of Maternity Leave Credits (CS Form No. 6a), if needed</li>
+                        <li>Seconded female employees shall enjoy maternity leave with full pay in the recipient agency.</li>
+                      </ul>
+                    </div>
 
-                      <div>
-                        <span className="font-bold">13. Monetization of leave credits</span>
-                        <p className="mt-0.5">
-                          Application for monetization of fifty percent (50%) or more of the accumulated leave credits shall be accompanied by letter request to the head of the agency stating the valid and justifiable reasons.
-                        </p>
-                      </div>
+                    <div>
+                      <span className="font-bold">5. Paternity leave – 7 days</span>
+                      <p className="mt-0.5">
+                        Proof of child&apos;s delivery e.g. birth certificate, medical certificate and marriage contract
+                      </p>
+                    </div>
 
-                      <div>
-                        <span className="font-bold">14. Terminal leave*</span>
-                        <p className="mt-0.5">
-                          Proof of employee&apos;s resignation or retirement or separation from the service.
-                        </p>
-                      </div>
+                    <div>
+                      <span className="font-bold">6. Special Privilege leave – 3 days</span>
+                      <p className="mt-0.5">
+                        It shall be filed/approved for at least one (1) week prior to availment, except on emergency cases. Special privilege leave within the Philippines or abroad shall be indicated in the form for purposes of securing travel authority and completing clearance from money and work accountabilities.
+                      </p>
+                    </div>
 
-                      <div>
-                        <span className="font-bold">15. Adoption Leave</span>
-                        <ul className="list-disc pl-3.5 space-y-0.5 mt-0.5">
-                          <li>Application for adoption leave shall be filed with an authenticated copy of the Pre-Adoptive Placement Authority issued by the Department of Social Welfare and Development (DSWD).</li>
-                        </ul>
-                      </div>
+                    <div>
+                      <span className="font-bold">7. Solo Parent leave – 7 days</span>
+                      <p className="mt-0.5">
+                        It shall be filed in advance or whenever possible five (5) days before going on such leave with updated Solo Parent Identification Card.
+                      </p>
+                    </div>
+
+                    <div>
+                      <span className="font-bold">8. Study leave* – up to 6 months</span>
+                      <ul className="list-disc pl-3.5 space-y-0.5 mt-0.5">
+                        <li>Shall meet the agency&apos;s internal requirements, if any;</li>
+                        <li>Contract between the agency head or authorized representative and the employee concerned.</li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <span className="font-bold">9. VAWC leave – 10 days</span>
+                      <ul className="list-disc pl-3.5 space-y-0.5 mt-0.5">
+                        <li>It shall be filed in advance or immediately upon the woman employee&apos;s return from such leave.</li>
+                        <li>
+                          It shall be accompanied by any of the following supporting documents:
+                          <div className="pl-1.5 space-y-0.5 mt-0.5">
+                            <p>a. Barangay Protection Order (BPO) obtained from the barangay;</p>
+                            <p>b. Temporary/Permanent Protection Order (TPO/PPO) obtained from the court;</p>
+                            <p>c. If the protection order is not yet issued by the barangay or the court, a certification issued by the Punong Barangay/Kagawad or Prosecutor or the Clerk of Court that the application for the BPO, TPO or PPO has been filed with the said office shall be sufficient to support the application for the ten-day leave; or</p>
+                            <p>d. In the absence of the BPO/TPO/PPO or the certification, a police report specifying the details of the occurrence of violence on the victim and a medical certificate may be considered, at the discretion of the immediate supervisor of the woman employee concerned.</p>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* Column 2: Items 10 to 15 */}
+                  <div className="space-y-1.5">
+                    <div>
+                      <span className="font-bold">10. Rehabilitation leave* – up to 6 months</span>
+                      <ul className="list-disc pl-3.5 space-y-0.5 mt-0.5">
+                        <li>Application shall be made within one (1) week from the time of the accident except when a longer period is warranted.</li>
+                        <li>Letter request supported by relevant reports such as the police report, if any.</li>
+                        <li>Medical certificate on the nature of the injuries, the course of treatment involved, and the need to undergo rest, recuperation, and rehabilitation, as the case may be.</li>
+                        <li>Written concurrence of a government physician should be obtained relative to the recommendation for rehabilitation if the attending physician is a private practitioner, particularly on the duration of the period of rehabilitation.</li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <span className="font-bold">11. Special leave benefits for women* – up to 2 months</span>
+                      <ul className="list-disc pl-3.5 space-y-0.5 mt-0.5">
+                        <li>The application may be filed in advance, that is, at least five (5) days prior to the scheduled date of the gynecological surgery that will be undergone by the employee. In case of emergency, the application for special leave shall be filed immediately upon employee&apos;s return but during confinement the agency shall be notified of said surgery.</li>
+                        <li>The application shall be accompanied by a medical certificate filled out by the proper medical authorities, e.g. the attending surgeon accompanied by a clinical summary reflecting the gynecological disorder which shall be addressed or was addressed by the said surgery; the histopathological report; the operative technique used for the surgery; the duration of the surgery including the peri-operative period (period of confinement around surgery); as well as the employee&apos;s estimated period of recuperation for the same.</li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <span className="font-bold">12. Special Emergency (Calamity) leave – up to 5 days</span>
+                      <ul className="list-disc pl-3.5 space-y-0.5 mt-0.5">
+                        <li>The special emergency leave can be applied for a maximum of five (5) straight working days or staggered basis within thirty (30) days from the actual occurrence of the natural calamity/disaster. Said privilege shall be enjoyed once a year, not in every instance of calamity or disaster.</li>
+                        <li>The head of office shall take full responsibility for the grant of special emergency leave and verification of the employee&apos;s eligibility to be granted thereof. Said verification shall include: validation of place of residence based on latest available records of the affected employee; verification that the place of residence is covered in the declaration of calamity area by the proper government agency; and such other proofs as may be necessary.</li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <span className="font-bold">13. Monetization of leave credits</span>
+                      <p className="mt-0.5">
+                        Application for monetization of fifty percent (50%) or more of the accumulated leave credits shall be accompanied by letter request to the head of the agency stating the valid and justifiable reasons.
+                      </p>
+                    </div>
+
+                    <div>
+                      <span className="font-bold">14. Terminal leave*</span>
+                      <p className="mt-0.5">
+                        Proof of employee&apos;s resignation or retirement or separation from the service.
+                      </p>
+                    </div>
+
+                    <div>
+                      <span className="font-bold">15. Adoption Leave</span>
+                      <ul className="list-disc pl-3.5 space-y-0.5 mt-0.5">
+                        <li>Application for adoption leave shall be filed with an authenticated copy of the Pre-Adoptive Placement Authority issued by the Department of Social Welfare and Development (DSWD).</li>
+                      </ul>
                     </div>
                   </div>
                 </div>
+              </div>
 
-                {/* Footnote */}
-                <div className="border-t border-black pt-1.5 mt-2 text-[7.5pt] italic text-justify leading-snug">
-                  * For leave of absence for thirty (30) calendar days or more and terminal leave, application shall be accompanied by a <span className="underline">clearance from money, property and work-related accountabilities</span> (pursuant to CSC Memorandum Circular No. 2, s. 1985).
-                </div>
+              {/* Footnote */}
+              <div className="border-t border-black pt-1.5 mt-2 text-[7.5pt] italic text-justify leading-snug">
+                * For leave of absence for thirty (30) calendar days or more and terminal leave, application shall be accompanied by a <span className="underline">clearance from money, property and work-related accountabilities</span> (pursuant to CSC Memorandum Circular No. 2, s. 1985).
               </div>
             </div>
           </div>
+        </div>
       </div>
     </div>
   )
