@@ -1,10 +1,23 @@
 import Database from 'better-sqlite3'
 import { app, ipcMain, shell } from 'electron'
 import { join } from 'path'
-import { existsSync, copyFileSync, mkdirSync, writeFileSync } from 'fs'
+import { existsSync, copyFileSync, mkdirSync, writeFileSync, readdirSync, statSync, unlinkSync } from 'fs'
+import crypto from 'crypto'
 import type { Api, AuditLog, Balance, Employee, Leave, LeaveType, LeaveRow, Signatory, Status } from '../shared/types'
 import { methods } from '../shared/types'
 import { accrued, carryOver, entitlement, weekdays } from '../shared/rules'
+
+// Clean up orphan temp export PDFs older than 24 hours
+try {
+  const tempDir = app.getPath('temp')
+  const now = Date.now()
+  for (const f of readdirSync(tempDir)) {
+    if (f.startsWith('leave-app-') && f.endsWith('.pdf')) {
+      const p = join(tempDir, f)
+      if (now - statSync(p).mtimeMs > 24 * 3600 * 1000) unlinkSync(p)
+    }
+  }
+} catch {}
 
 const userDataDir = app.getPath('userData')
 const dbPath = join(userDataDir, 'leave.db')
@@ -58,6 +71,10 @@ db.exec(`
     position TEXT NOT NULL DEFAULT '',
     office TEXT NOT NULL DEFAULT '',
     role TEXT NOT NULL DEFAULT 'supervisor'
+  );
+  CREATE TABLE IF NOT EXISTS settings (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL
   );
   CREATE INDEX IF NOT EXISTS idx_leaves_emp_type ON leaves (employee_id, leave_type_id, status);
   CREATE INDEX IF NOT EXISTS idx_leaves_dates ON leaves (start_date, end_date);
@@ -122,6 +139,40 @@ db.exec(`
 for (const emp of db.prepare('SELECT id, name FROM employees').all() as { id: number; name: string }[]) {
   const upper = emp.name.toUpperCase()
   if (upper !== emp.name) db.prepare('UPDATE employees SET name = ? WHERE id = ?').run(upper, emp.id)
+}
+
+let failedPinAttempts = 0
+let pinLockoutUntil = 0
+
+function verifyPin(pin: string): void {
+  const now = Date.now()
+  if (now < pinLockoutUntil) {
+    const remaining = Math.ceil((pinLockoutUntil - now) / 1000)
+    throw new Error(`Too many incorrect PIN attempts. Try again in ${remaining}s.`)
+  }
+
+  const row = db.prepare('SELECT value FROM settings WHERE key = ?').get('pin_hash') as { value: string } | undefined
+  let expectedHash = row?.value
+  if (!expectedHash) {
+    expectedHash = crypto.scryptSync('9696', 'leave_salt', 32).toString('hex')
+    db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)').run('pin_hash', expectedHash)
+  }
+
+  const inputHash = crypto.scryptSync(pin || '', 'leave_salt', 32).toString('hex')
+  const isValid = crypto.timingSafeEqual(Buffer.from(inputHash, 'hex'), Buffer.from(expectedHash, 'hex'))
+
+  if (!isValid) {
+    failedPinAttempts++
+    if (failedPinAttempts >= 5) {
+      pinLockoutUntil = Date.now() + 5 * 60 * 1000
+      failedPinAttempts = 0
+      logAction('Security Alert', '5 consecutive failed PIN attempts detected. Locked for 5 minutes.')
+      throw new Error('Too many incorrect PIN attempts. Locked for 5 minutes.')
+    }
+    throw new Error('Invalid PIN')
+  }
+
+  failedPinAttempts = 0
 }
 
 function logAction(action: string, details: string): void {
@@ -337,7 +388,7 @@ const handlers: Api = {
     logAction('Leave Status Change', `Changed leave #${id} for ${emp?.name} from ${l.status} to ${status}`)
   },
   async deleteLeave(id, pin) {
-    if (pin !== '9696') throw new Error('Invalid PIN')
+    verifyPin(pin)
     if (!Number.isInteger(id)) throw new Error('Invalid ID.')
     const l = db.prepare('SELECT * FROM leaves WHERE id = ?').get(id) as LeaveRow | undefined
     db.prepare('DELETE FROM leaves WHERE id = ?').run(id)
@@ -394,11 +445,12 @@ const handlers: Api = {
     return db.prepare('SELECT * FROM audit_logs ORDER BY id DESC LIMIT 500').all() as AuditLog[]
   },
   async deleteLogs(pin: string, id?: number) {
-    if (pin !== '9696') throw new Error('Invalid PIN')
+    verifyPin(pin)
     if (id) {
       db.prepare('DELETE FROM audit_logs WHERE id = ?').run(id)
     } else {
       db.prepare('DELETE FROM audit_logs').run()
+      logAction('Security', 'Audit logs were cleared with authorized PIN.')
     }
   },
   async listSignatories() {
@@ -430,7 +482,7 @@ ipcMain.handle('db', async (event, method: string, ...args: unknown[]) => {
       margins: { top: 0, bottom: 0, left: 0, right: 0 },
       printBackground: true
     })
-    const name = String(args[0] || 'leave-application').replace(/[^a-zA-Z0-9_-]/g, '_')
+    const name = String(args[0] || 'leave-application').replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 60)
     const pdfPath = join(app.getPath('temp'), `${name}-${Date.now()}.pdf`)
     writeFileSync(pdfPath, buffer)
     await shell.openPath(pdfPath)

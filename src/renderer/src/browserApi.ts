@@ -317,6 +317,7 @@ export const browserApi: Api = {
       set('lm_logs', getLogs().filter((l) => l.id !== id))
     } else {
       set('lm_logs', [])
+      logAction('Security', 'Audit logs were cleared with authorized PIN.')
     }
   },
   async listSignatories() {

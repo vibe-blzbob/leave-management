@@ -30,10 +30,6 @@ export default function Logs(): React.JSX.Element {
 
   const handleDelete = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault()
-    if (pin !== '9696') {
-      setPinErr('Incorrect PIN')
-      return
-    }
     setSubmitting(true)
     try {
       await api.deleteLogs(pin, pinModal?.targetId)

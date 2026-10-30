@@ -66,10 +66,6 @@ export default function Leave(): React.JSX.Element {
   const handleDeleteLeave = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault()
     if (!deletingLeave) return
-    if (pin !== '9696') {
-      setPinErr('Incorrect PIN')
-      return
-    }
     setSubmitting(true)
     try {
       await api.deleteLeave(deletingLeave.id, pin)
