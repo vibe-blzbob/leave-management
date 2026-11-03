@@ -638,7 +638,6 @@ export default function PrintLeave(): React.JSX.Element {
                             </span>
                           </div>
                           <div className="text-[9.5px] font-semibold text-slate-900 uppercase">{activeCert.position}</div>
-                          <div className="text-[8.5px] text-slate-600 uppercase tracking-wider">(Authorized Officer)</div>
                         </div>
                       </div>
                     </td>
@@ -671,7 +670,6 @@ export default function PrintLeave(): React.JSX.Element {
                             </span>
                           </div>
                           <div className="text-[9.5px] font-semibold text-slate-900 uppercase">{activeSup.position}</div>
-                          <div className="text-[8.5px] text-slate-600 uppercase tracking-wider">(Immediate Supervisor)</div>
                         </div>
                       </div>
                     </td>
@@ -722,9 +720,6 @@ export default function PrintLeave(): React.JSX.Element {
                       <div className="text-[10.5px] font-bold text-slate-900 uppercase tracking-wide">
                         {appPosition || 'Provincial Governor'}
                       </div>
-                      <div className="text-[8.5px] text-slate-600 uppercase tracking-wider mt-0.5">
-                        (Authorized Official)
-                      </div>
                     </td>
                   </tr>
                 </tbody>
@@ -734,25 +729,25 @@ export default function PrintLeave(): React.JSX.Element {
 
           {/* Sheet 2 - CSC Form No. 6 Back Page (Instructions and Requirements) */}
           <div
-            className="cs-page cs-page-2 p-8 text-[8pt] leading-[1.28] text-black bg-white shadow-2xl flex flex-col justify-between"
+            className="cs-page cs-page-2 p-8 text-[8.5pt] leading-[1.35] text-black bg-white shadow-2xl flex flex-col justify-between"
             style={{ width: '8.5in', height: '13in', boxSizing: 'border-box' }}
           >
             <div className="flex flex-col justify-between h-full">
               <div>
                 {/* Header Box */}
-                <div className="border border-black py-1 px-4 mb-2.5">
-                  <h2 className="text-center font-bold text-[10.5pt] tracking-wider uppercase text-black">
+                <div className="border-2 border-black py-1.5 px-4 mb-3 text-center bg-slate-50/50">
+                  <h2 className="font-extrabold text-[11pt] tracking-wider uppercase text-black">
                     INSTRUCTIONS AND REQUIREMENTS
                   </h2>
                 </div>
 
-                <p className="mb-2 text-justify text-[8pt]">
+                <p className="mb-3 text-justify text-[8.5pt] leading-normal">
                   Application for any type of leave shall be made on this Form and <span className="underline font-semibold">to be accomplished at least in duplicate</span> with documentary requirements, as follows:
                 </p>
 
-                <div className="grid grid-cols-2 gap-x-5 gap-y-2 text-justify text-[7.5pt] leading-[1.24]">
+                <div className="grid grid-cols-2 gap-x-6 text-justify text-[8.2pt] leading-[1.32]">
                   {/* Column 1: Items 1 to 9 */}
-                  <div className="space-y-1.5">
+                  <div className="space-y-3">
                     <div>
                       <span className="font-bold">1. Vacation leave*</span>
                       <p className="mt-0.5">
@@ -769,7 +764,7 @@ export default function PrintLeave(): React.JSX.Element {
 
                     <div>
                       <span className="font-bold">3. Sick leave*</span>
-                      <ul className="list-disc pl-3.5 space-y-0.5 mt-0.5">
+                      <ul className="list-disc pl-3.5 space-y-1 mt-0.5">
                         <li>It shall be filed immediately upon employee&apos;s return from such leave.</li>
                         <li>If filed in advance or exceeding five (5) days, application shall be accompanied by a medical certificate. In case medical consultation was not availed of, an affidavit should be executed by an applicant.</li>
                       </ul>
@@ -777,7 +772,7 @@ export default function PrintLeave(): React.JSX.Element {
 
                     <div>
                       <span className="font-bold">4. Maternity leave* – 105 days</span>
-                      <ul className="list-disc pl-3.5 space-y-0.5 mt-0.5">
+                      <ul className="list-disc pl-3.5 space-y-1 mt-0.5">
                         <li>Proof of pregnancy e.g. ultrasound, doctor&apos;s certificate on the expected date of delivery</li>
                         <li>Accomplished Notice of Allocation of Maternity Leave Credits (CS Form No. 6a), if needed</li>
                         <li>Seconded female employees shall enjoy maternity leave with full pay in the recipient agency.</li>
@@ -807,7 +802,7 @@ export default function PrintLeave(): React.JSX.Element {
 
                     <div>
                       <span className="font-bold">8. Study leave* – up to 6 months</span>
-                      <ul className="list-disc pl-3.5 space-y-0.5 mt-0.5">
+                      <ul className="list-disc pl-3.5 space-y-1 mt-0.5">
                         <li>Shall meet the agency&apos;s internal requirements, if any;</li>
                         <li>Contract between the agency head or authorized representative and the employee concerned.</li>
                       </ul>
@@ -815,7 +810,7 @@ export default function PrintLeave(): React.JSX.Element {
 
                     <div>
                       <span className="font-bold">9. VAWC leave – 10 days</span>
-                      <ul className="list-disc pl-3.5 space-y-0.5 mt-0.5">
+                      <ul className="list-disc pl-3.5 space-y-1 mt-0.5">
                         <li>It shall be filed in advance or immediately upon the woman employee&apos;s return from such leave.</li>
                         <li>
                           It shall be accompanied by any of the following supporting documents:
@@ -831,10 +826,10 @@ export default function PrintLeave(): React.JSX.Element {
                   </div>
 
                   {/* Column 2: Items 10 to 15 */}
-                  <div className="space-y-1.5">
+                  <div className="space-y-3">
                     <div>
                       <span className="font-bold">10. Rehabilitation leave* – up to 6 months</span>
-                      <ul className="list-disc pl-3.5 space-y-0.5 mt-0.5">
+                      <ul className="list-disc pl-3.5 space-y-1 mt-0.5">
                         <li>Application shall be made within one (1) week from the time of the accident except when a longer period is warranted.</li>
                         <li>Letter request supported by relevant reports such as the police report, if any.</li>
                         <li>Medical certificate on the nature of the injuries, the course of treatment involved, and the need to undergo rest, recuperation, and rehabilitation, as the case may be.</li>
@@ -844,7 +839,7 @@ export default function PrintLeave(): React.JSX.Element {
 
                     <div>
                       <span className="font-bold">11. Special leave benefits for women* – up to 2 months</span>
-                      <ul className="list-disc pl-3.5 space-y-0.5 mt-0.5">
+                      <ul className="list-disc pl-3.5 space-y-1 mt-0.5">
                         <li>The application may be filed in advance, that is, at least five (5) days prior to the scheduled date of the gynecological surgery that will be undergone by the employee. In case of emergency, the application for special leave shall be filed immediately upon employee&apos;s return but during confinement the agency shall be notified of said surgery.</li>
                         <li>The application shall be accompanied by a medical certificate filled out by the proper medical authorities, e.g. the attending surgeon accompanied by a clinical summary reflecting the gynecological disorder which shall be addressed or was addressed by the said surgery; the histopathological report; the operative technique used for the surgery; the duration of the surgery including the peri-operative period (period of confinement around surgery); as well as the employee&apos;s estimated period of recuperation for the same.</li>
                       </ul>
@@ -852,7 +847,7 @@ export default function PrintLeave(): React.JSX.Element {
 
                     <div>
                       <span className="font-bold">12. Special Emergency (Calamity) leave – up to 5 days</span>
-                      <ul className="list-disc pl-3.5 space-y-0.5 mt-0.5">
+                      <ul className="list-disc pl-3.5 space-y-1 mt-0.5">
                         <li>The special emergency leave can be applied for a maximum of five (5) straight working days or staggered basis within thirty (30) days from the actual occurrence of the natural calamity/disaster. Said privilege shall be enjoyed once a year, not in every instance of calamity or disaster.</li>
                         <li>The head of office shall take full responsibility for the grant of special emergency leave and verification of the employee&apos;s eligibility to be granted thereof. Said verification shall include: validation of place of residence based on latest available records of the affected employee; verification that the place of residence is covered in the declaration of calamity area by the proper government agency; and such other proofs as may be necessary.</li>
                       </ul>
@@ -874,7 +869,7 @@ export default function PrintLeave(): React.JSX.Element {
 
                     <div>
                       <span className="font-bold">15. Adoption Leave</span>
-                      <ul className="list-disc pl-3.5 space-y-0.5 mt-0.5">
+                      <ul className="list-disc pl-3.5 space-y-1 mt-0.5">
                         <li>Application for adoption leave shall be filed with an authenticated copy of the Pre-Adoptive Placement Authority issued by the Department of Social Welfare and Development (DSWD).</li>
                       </ul>
                     </div>
@@ -883,8 +878,8 @@ export default function PrintLeave(): React.JSX.Element {
               </div>
 
               {/* Footnote */}
-              <div className="border-t border-black pt-1.5 mt-2 text-[7.5pt] italic text-justify leading-snug">
-                * For leave of absence for thirty (30) calendar days or more and terminal leave, application shall be accompanied by a <span className="underline">clearance from money, property and work-related accountabilities</span> (pursuant to CSC Memorandum Circular No. 2, s. 1985).
+              <div className="border-t-2 border-black pt-2 mt-4 text-[8pt] italic text-justify leading-snug">
+                * For leave of absence for thirty (30) calendar days or more and terminal leave, application shall be accompanied by a <span className="underline font-semibold">clearance from money, property and work-related accountabilities</span> (pursuant to CSC Memorandum Circular No. 2, s. 1985).
               </div>
             </div>
           </div>

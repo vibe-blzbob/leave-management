@@ -646,7 +646,6 @@ export function PrintLeaveApplicationModal({ leave, employee, onClose }: PrintMo
                               </span>
                             </div>
                             <div className="text-[9.5px] font-semibold text-slate-900 uppercase">{activeCert.position}</div>
-                            {/* <div className="text-[8.5px] text-slate-600 uppercase tracking-wider">(Authorized Officer)</div> */}
                           </div>
                         </div>
                       </td>
@@ -680,7 +679,6 @@ export function PrintLeaveApplicationModal({ leave, employee, onClose }: PrintMo
                               </span>
                             </div>
                             <div className="text-[9.5px] font-semibold text-slate-900 uppercase">{activeSup.position}</div>
-                            {/* <div className="text-[8.5px] text-slate-600 uppercase tracking-wider">(Immediate Supervisor)</div> */}
                           </div>
                         </div>
                       </td>
@@ -735,9 +733,6 @@ export function PrintLeaveApplicationModal({ leave, employee, onClose }: PrintMo
                         <div className="text-[10.5px] font-bold text-slate-900 uppercase tracking-wide">
                           {appPosition || 'Provincial Governor'}
                         </div>
-                        {/* <div className="text-[8.5px] text-slate-600 uppercase tracking-wider mt-0.5">
-                          (Authorized Official)
-                        </div> */}
                       </td>
                     </tr>
                   </tbody>
@@ -747,115 +742,157 @@ export function PrintLeaveApplicationModal({ leave, employee, onClose }: PrintMo
 
             {/* ================= PAGE 2 (Mandatory Back-to-Back) ================= */}
             <div
-              className="cs-page cs-page-2 p-5 text-[9.5px] leading-[1.3] text-black bg-white shadow-2xl flex flex-col justify-between"
-              style={{ width: '8.5in', minHeight: '13in', boxSizing: 'border-box', pageBreakBefore: 'always' }}
+              className="cs-page cs-page-2 p-8 text-[8.5pt] leading-[1.35] text-black bg-white shadow-2xl flex flex-col justify-between"
+              style={{ width: '8.5in', height: '13in', boxSizing: 'border-box' }}
             >
-              <div className="border-2 border-black p-4 h-full flex flex-col justify-between">
+              <div className="flex flex-col justify-between h-full">
                 <div>
-                  <h2 className="text-center font-bold text-[12px] tracking-wider uppercase mb-2.5 border-b-2 border-black pb-1 text-black">
-                    INSTRUCTIONS AND REQUIREMENTS
-                  </h2>
+                  {/* Header Box */}
+                  <div className="border-2 border-black py-1.5 px-4 mb-3 text-center bg-slate-50/50">
+                    <h2 className="font-extrabold text-[11pt] tracking-wider uppercase text-black">
+                      INSTRUCTIONS AND REQUIREMENTS
+                    </h2>
+                  </div>
 
-                  <p className="mb-2 text-justify">
-                    Application for any type of leave shall be made on this Form and to be accomplished at least in duplicate with documentary requirements, as follows:
+                  <p className="mb-3 text-justify text-[8.5pt] leading-normal">
+                    Application for any type of leave shall be made on this Form and <span className="underline font-semibold">to be accomplished at least in duplicate</span> with documentary requirements, as follows:
                   </p>
 
-                  <ol className="space-y-1.5 list-none pl-0 text-justify">
-                    <li>
-                      <span className="font-bold">1. Vacation leave*</span><br />
-                      It shall be filed five (5) days in advance, whenever possible, of the effective date of such leave. Vacation leave within the Philippines or abroad shall be indicated in the form for purposes of securing travel authority and completing clearance from money and work accountabilities.
-                    </li>
-
-                    <li>
-                      <span className="font-bold">2. Mandatory/Forced leave</span><br />
-                      Annual five-day vacation leave shall be forfeited if not taken during the year. In case the scheduled leave has been cancelled in the exigency of the service by the head of agency, it shall no longer be deducted from the accumulated vacation leave. Availment of one (1) day or more Vacation Leave (VL) shall be considered for complying the mandatory/forced leave subject to the conditions under Section 25, Rule XVI of the Omnibus Rules Implementing E.O. No. 292.
-                    </li>
-
-                    <li>
-                      <span className="font-bold">3. Sick leave*</span><br />
-                      • It shall be filed immediately upon employee's return from such leave.<br />
-                      • If filed in advance or exceeding five (5) days, application shall be accompanied by a medical certificate. In case medical consultation was not availed of, an affidavit should be executed by an applicant.
-                    </li>
-
-                    <li>
-                      <span className="font-bold">4. Maternity leave* – 105 days</span><br />
-                      • Proof of pregnancy e.g. ultrasound, doctor’s certificate on the expected date of delivery<br />
-                      • Accomplished Notice of Allocation of Maternity Leave Credits (CS Form No. 6a), if needed<br />
-                      • Seconded female employees shall enjoy maternity leave with full pay in the recipient agency.
-                    </li>
-
-                    <li>
-                      <span className="font-bold">5. Paternity leave – 7 days</span><br />
-                      Proof of child’s delivery e.g. birth certificate, medical certificate and marriage contract.
-                    </li>
-
-                    <li>
-                      <span className="font-bold">6. Special Privilege leave – 3 days</span><br />
-                      It shall be filed/approved for at least one (1) week prior to availment, except on emergency cases. Special privilege leave within the Philippines or abroad shall be indicated in the form for purposes of securing travel authority and completing clearance from money and work accountabilities.
-                    </li>
-
-                    <li>
-                      <span className="font-bold">7. Solo Parent leave – 7 days</span><br />
-                      It shall be filed in advance or whenever possible five (5) days before going on such leave with updated Solo Parent Identification Card.
-                    </li>
-
-                    <li>
-                      <span className="font-bold">8. Study leave* – up to 6 months</span><br />
-                      • Shall meet the agency’s internal requirements, if any;<br />
-                      • Contract between the agency head or authorized representative and the employee concerned.
-                    </li>
-
-                    <li>
-                      <span className="font-bold">9. VAWC leave – 10 days</span><br />
-                      • It shall be filed in advance or immediately upon the woman employee’s return from such leave.<br />
-                      • It shall be accompanied by any of the following supporting documents:
-                      <div className="pl-3 text-[10px] space-y-0.5 mt-0.5">
-                        <div>a. Barangay Protection Order (BPO) obtained from the barangay;</div>
-                        <div>b. Temporary/Permanent Protection Order (TPO/PPO) obtained from the court;</div>
-                        <div>c. If the protection order is not yet issued by the barangay or the court, a certification issued by the Punong Barangay/Kagawad or Prosecutor or the Clerk of Court that the application for the BPO, TPO or PPO has been filed with the said office shall be sufficient to support the application for the ten-day leave; or</div>
-                        <div>d. In the absence of the BPO/TPO/PPO or the certification, a police report specifying the details of the occurrence of violence on the victim and a medical certificate may be considered, at the discretion of the immediate supervisor of the woman employee concerned.</div>
+                  <div className="grid grid-cols-2 gap-x-6 text-justify text-[8.2pt] leading-[1.32]">
+                    {/* Column 1: Items 1 to 9 */}
+                    <div className="space-y-3">
+                      <div>
+                        <span className="font-bold">1. Vacation leave*</span>
+                        <p className="mt-0.5">
+                          It shall be filed five (5) days in advance, whenever possible, of the effective date of such leave. Vacation leave within the Philippines or abroad shall be indicated in the form for purposes of securing travel authority and completing clearance from money and work accountabilities.
+                        </p>
                       </div>
-                    </li>
 
-                    <li>
-                      <span className="font-bold">10. Rehabilitation leave* – up to 6 months</span><br />
-                      • Application shall be made within one (1) week from the time of the accident except when a longer period is warranted.<br />
-                      • Letter request supported by relevant reports such as the police report, if any.<br />
-                      • Medical certificate on the nature of the injuries, the course of treatment involved, and the need to undergo rest, recuperation, and rehabilitation, as the case may be.<br />
-                      • Written concurrence of a government physician should be obtained relative to the recommendation for rehabilitation if the attending physician is a private practitioner, particularly on the duration of the period of rehabilitation.
-                    </li>
+                      <div>
+                        <span className="font-bold">2. Mandatory/Forced leave</span>
+                        <p className="mt-0.5">
+                          Annual five-day vacation leave shall be forfeited if not taken during the year. In case the scheduled leave has been cancelled in the exigency of the service by the head of agency, it shall no longer be deducted from the accumulated vacation leave. Availment of one (1) day or more Vacation Leave (VL) shall be considered for complying the mandatory/forced leave subject to the conditions under Section 25, Rule XVI of the Omnibus Rules Implementing E.O. No. 292.
+                        </p>
+                      </div>
 
-                    <li>
-                      <span className="font-bold">11. Special leave benefits for women* – up to 2 months</span><br />
-                      • The application may be filed in advance, that is, at least five (5) days prior to the scheduled date of the gynecological surgery that will be undergone by the employee. In case of emergency, the application for special leave shall be filed immediately upon employee’s return but during confinement the agency shall be notified of said surgery.<br />
-                      • The application shall be accompanied by a medical certificate filled out by the proper medical authorities, e.g. the attending surgeon accompanied by a clinical summary reflecting the gynecological disorder which shall be addressed or was addressed by the said surgery; the histopathological report; the operative technique used for the surgery; the duration of the surgery including the peri-operative period (period of confinement around surgery); as well as the employee's estimated period of recuperation for the same.
-                    </li>
+                      <div>
+                        <span className="font-bold">3. Sick leave*</span>
+                        <ul className="list-disc pl-3.5 space-y-1 mt-0.5">
+                          <li>It shall be filed immediately upon employee&apos;s return from such leave.</li>
+                          <li>If filed in advance or exceeding five (5) days, application shall be accompanied by a medical certificate. In case medical consultation was not availed of, an affidavit should be executed by an applicant.</li>
+                        </ul>
+                      </div>
 
-                    <li>
-                      <span className="font-bold">12. Special Emergency (Calamity) leave – up to 5 days</span><br />
-                      • The special emergency leave can be applied for a maximum of five (5) straight working days or staggered basis within thirty (30) days from the actual occurrence of the natural calamity/disaster. Said privilege shall be enjoyed once a year, not in every instance of calamity or disaster.<br />
-                      • The head of office shall take full responsibility for the grant of special emergency leave and verification of the employee’s eligibility to be granted thereof.
-                    </li>
+                      <div>
+                        <span className="font-bold">4. Maternity leave* – 105 days</span>
+                        <ul className="list-disc pl-3.5 space-y-1 mt-0.5">
+                          <li>Proof of pregnancy e.g. ultrasound, doctor&apos;s certificate on the expected date of delivery</li>
+                          <li>Accomplished Notice of Allocation of Maternity Leave Credits (CS Form No. 6a), if needed</li>
+                          <li>Seconded female employees shall enjoy maternity leave with full pay in the recipient agency.</li>
+                        </ul>
+                      </div>
 
-                    <li>
-                      <span className="font-bold">13. Monetization of leave credits</span><br />
-                      Application for monetization of fifty percent (50%) or more of the accumulated leave credits shall be accompanied by letter request to the head of the agency stating the valid and justifiable reasons.
-                    </li>
+                      <div>
+                        <span className="font-bold">5. Paternity leave – 7 days</span>
+                        <p className="mt-0.5">
+                          Proof of child&apos;s delivery e.g. birth certificate, medical certificate and marriage contract
+                        </p>
+                      </div>
 
-                    <li>
-                      <span className="font-bold">14. Terminal leave*</span><br />
-                      Proof of employee’s resignation or retirement or separation from the service.
-                    </li>
+                      <div>
+                        <span className="font-bold">6. Special Privilege leave – 3 days</span>
+                        <p className="mt-0.5">
+                          It shall be filed/approved for at least one (1) week prior to availment, except on emergency cases. Special privilege leave within the Philippines or abroad shall be indicated in the form for purposes of securing travel authority and completing clearance from money and work accountabilities.
+                        </p>
+                      </div>
 
-                    <li>
-                      <span className="font-bold">15. Adoption Leave</span><br />
-                      Application for adoption leave shall be filed with an authenticated copy of the Pre-Adoptive Placement Authority issued by the Department of Social Welfare and Development (DSWD).
-                    </li>
-                  </ol>
+                      <div>
+                        <span className="font-bold">7. Solo Parent leave – 7 days</span>
+                        <p className="mt-0.5">
+                          It shall be filed in advance or whenever possible five (5) days before going on such leave with updated Solo Parent Identification Card.
+                        </p>
+                      </div>
+
+                      <div>
+                        <span className="font-bold">8. Study leave* – up to 6 months</span>
+                        <ul className="list-disc pl-3.5 space-y-1 mt-0.5">
+                          <li>Shall meet the agency&apos;s internal requirements, if any;</li>
+                          <li>Contract between the agency head or authorized representative and the employee concerned.</li>
+                        </ul>
+                      </div>
+
+                      <div>
+                        <span className="font-bold">9. VAWC leave – 10 days</span>
+                        <ul className="list-disc pl-3.5 space-y-1 mt-0.5">
+                          <li>It shall be filed in advance or immediately upon the woman employee&apos;s return from such leave.</li>
+                          <li>
+                            It shall be accompanied by any of the following supporting documents:
+                            <div className="pl-1.5 space-y-0.5 mt-0.5">
+                              <p>a. Barangay Protection Order (BPO) obtained from the barangay;</p>
+                              <p>b. Temporary/Permanent Protection Order (TPO/PPO) obtained from the court;</p>
+                              <p>c. If the protection order is not yet issued by the barangay or the court, a certification issued by the Punong Barangay/Kagawad or Prosecutor or the Clerk of Court that the application for the BPO, TPO or PPO has been filed with the said office shall be sufficient to support the application for the ten-day leave; or</p>
+                              <p>d. In the absence of the BPO/TPO/PPO or the certification, a police report specifying the details of the occurrence of violence on the victim and a medical certificate may be considered, at the discretion of the immediate supervisor of the woman employee concerned.</p>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    {/* Column 2: Items 10 to 15 */}
+                    <div className="space-y-3">
+                      <div>
+                        <span className="font-bold">10. Rehabilitation leave* – up to 6 months</span>
+                        <ul className="list-disc pl-3.5 space-y-1 mt-0.5">
+                          <li>Application shall be made within one (1) week from the time of the accident except when a longer period is warranted.</li>
+                          <li>Letter request supported by relevant reports such as the police report, if any.</li>
+                          <li>Medical certificate on the nature of the injuries, the course of treatment involved, and the need to undergo rest, recuperation, and rehabilitation, as the case may be.</li>
+                          <li>Written concurrence of a government physician should be obtained relative to the recommendation for rehabilitation if the attending physician is a private practitioner, particularly on the duration of the period of rehabilitation.</li>
+                        </ul>
+                      </div>
+
+                      <div>
+                        <span className="font-bold">11. Special leave benefits for women* – up to 2 months</span>
+                        <ul className="list-disc pl-3.5 space-y-1 mt-0.5">
+                          <li>The application may be filed in advance, that is, at least five (5) days prior to the scheduled date of the gynecological surgery that will be undergone by the employee. In case of emergency, the application for special leave shall be filed immediately upon employee&apos;s return but during confinement the agency shall be notified of said surgery.</li>
+                          <li>The application shall be accompanied by a medical certificate filled out by the proper medical authorities, e.g. the attending surgeon accompanied by a clinical summary reflecting the gynecological disorder which shall be addressed or was addressed by the said surgery; the histopathological report; the operative technique used for the surgery; the duration of the surgery including the peri-operative period (period of confinement around surgery); as well as the employee&apos;s estimated period of recuperation for the same.</li>
+                        </ul>
+                      </div>
+
+                      <div>
+                        <span className="font-bold">12. Special Emergency (Calamity) leave – up to 5 days</span>
+                        <ul className="list-disc pl-3.5 space-y-1 mt-0.5">
+                          <li>The special emergency leave can be applied for a maximum of five (5) straight working days or staggered basis within thirty (30) days from the actual occurrence of the natural calamity/disaster. Said privilege shall be enjoyed once a year, not in every instance of calamity or disaster.</li>
+                          <li>The head of office shall take full responsibility for the grant of special emergency leave and verification of the employee&apos;s eligibility to be granted thereof. Said verification shall include: validation of place of residence based on latest available records of the affected employee; verification that the place of residence is covered in the declaration of calamity area by the proper government agency; and such other proofs as may be necessary.</li>
+                        </ul>
+                      </div>
+
+                      <div>
+                        <span className="font-bold">13. Monetization of leave credits</span>
+                        <p className="mt-0.5">
+                          Application for monetization of fifty percent (50%) or more of the accumulated leave credits shall be accompanied by letter request to the head of the agency stating the valid and justifiable reasons.
+                        </p>
+                      </div>
+
+                      <div>
+                        <span className="font-bold">14. Terminal leave*</span>
+                        <p className="mt-0.5">
+                          Proof of employee&apos;s resignation or retirement or separation from the service.
+                        </p>
+                      </div>
+
+                      <div>
+                        <span className="font-bold">15. Adoption Leave</span>
+                        <ul className="list-disc pl-3.5 space-y-1 mt-0.5">
+                          <li>Application for adoption leave shall be filed with an authenticated copy of the Pre-Adoptive Placement Authority issued by the Department of Social Welfare and Development (DSWD).</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="border-t border-black pt-2 mt-4 text-[9px] italic">
-                  * For leave of absence for thirty (30) calendar days or more and terminal leave, application shall be accompanied by a clearance from money, property and work-related accountabilities (pursuant to CSC Memorandum Circular No. 2, s. 1985).
+                {/* Footnote */}
+                <div className="border-t-2 border-black pt-2 mt-4 text-[8pt] italic text-justify leading-snug">
+                  * For leave of absence for thirty (30) calendar days or more and terminal leave, application shall be accompanied by a <span className="underline font-semibold">clearance from money, property and work-related accountabilities</span> (pursuant to CSC Memorandum Circular No. 2, s. 1985).
                 </div>
               </div>
             </div>
