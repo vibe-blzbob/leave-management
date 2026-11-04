@@ -82,16 +82,16 @@ const defaultSignatories: Signatory[] = [
   { id: 5, name: 'SHIELA T. ABDULGANI, MSFS', position: 'Provincial Agriculturist', office: 'Office of the Provincial Agriculturist', role: 'supervisor' },
   { id: 6, name: 'ARLENE P. DILLO', position: 'Acting Secretary to the Sangguniang Panlalawigan', office: 'Office of the Secretary of the Sangguniang Panlalawigan', role: 'supervisor' },
   { id: 7, name: 'SAPIA S. LUMINOG, CPA', position: 'Provincial Accountant', office: 'Provincial Accounting Office', role: 'supervisor' },
-  { id: 8, name: 'EDWIN B. VILLADOLID', position: 'Provincial Assessor', office: 'Provincial Assessor Office', role: 'supervisor' },
-  { id: 9, name: 'RAMIL ROY D. TIOLO', position: 'Provincial Budget Officer', office: 'Provincial Budget Office', role: 'supervisor' },
+  { id: 8, name: 'ENGR. EDWIN B. VILLADOLID', position: 'Provincial Assessor', office: 'Provincial Assessor Office', role: 'supervisor' },
+  { id: 9, name: 'RAMIL ROY D. TIOLO, EnP, JD, MPA', position: 'Provincial Budget Officer', office: 'Provincial Budget Office', role: 'supervisor' },
   { id: 10, name: 'MUSLIMIN Z. PAGLALA', position: "Acting Prov'l Disaster Risk Reduction & Mngt. Officer", office: 'Provincial Disaster Risk Reduction & Management', role: 'supervisor' },
   { id: 11, name: 'ENGR. MOHAMMED D. SAMPULNA', position: 'Provincial Engineer', office: 'Provincial Engineer Office', role: 'supervisor' },
-  { id: 12, name: 'MUSTAPHA S. NUR', position: 'Provincial General Services Officer', office: 'Provincial General Services Office', role: 'supervisor' },
+  { id: 12, name: 'MUSTAPHA S. NUR, JD', position: 'Provincial General Services Officer', office: 'Provincial General Services Office', role: 'supervisor' },
   { id: 13, name: 'MONINA K. MACARONGON, MPA', position: "Prov'l Human Resource Mngt. Officer", office: 'Provincial Human Resource Management Office', role: 'certifier' },
   { id: 14, name: 'ENGR. FATIMA U. BANSUAN, EnP', position: "Prov'l Planning and Devt. Coordinator", office: 'Provincial Planning and Development Office', role: 'supervisor' },
   { id: 15, name: 'AMRAIDA P. MAMALUBA', position: 'Provincial Treasurer', office: 'Provincial Treasurer Office', role: 'supervisor' },
   { id: 16, name: 'HADDAH M. GAYAK', position: 'Acting Provincial Tourism Officer', office: 'Provincial Tourism Office', role: 'supervisor' },
-  { id: 17, name: 'DR. YUSOFF ADRIAN C. ABAS, MPA', position: 'Provincial Veterinarian', office: 'Provincial Veterinarian Office', role: 'supervisor' }
+  { id: 17, name: 'DR. YUSOFF ADRIAN C. ABAS', position: 'Provincial Veterinarian', office: 'Provincial Veterinarian Office', role: 'supervisor' }
 ]
 
 function getSignatories(): Signatory[] {

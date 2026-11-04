@@ -17,7 +17,7 @@ try {
       if (now - statSync(p).mtimeMs > 24 * 3600 * 1000) unlinkSync(p)
     }
   }
-} catch {}
+} catch { }
 
 const userDataDir = app.getPath('userData')
 const dbPath = join(userDataDir, 'leave.db')
@@ -32,11 +32,11 @@ if (!existsSync(dbPath)) {
   if (existsSync(legacyPath)) {
     try {
       copyFileSync(legacyPath, dbPath)
-    } catch {}
+    } catch { }
   } else if (existsSync(bundledSeed)) {
     try {
       copyFileSync(bundledSeed, dbPath)
-    } catch {}
+    } catch { }
   }
 }
 
@@ -82,10 +82,10 @@ db.exec(`
 
 try {
   db.exec(`ALTER TABLE signatories ADD COLUMN position TEXT NOT NULL DEFAULT ''`)
-} catch {}
+} catch { }
 try {
   db.exec(`ALTER TABLE signatories ADD COLUMN office TEXT NOT NULL DEFAULT ''`)
-} catch {}
+} catch { }
 
 const sigCount = (db.prepare('SELECT COUNT(*) as c FROM signatories').get() as { c: number }).c
 if (sigCount === 0) {
@@ -98,16 +98,16 @@ if (sigCount === 0) {
     ['SHIELA T. ABDULGANI, MSFS', 'Provincial Agriculturist', 'Office of the Provincial Agriculturist', 'supervisor'],
     ['ARLENE P. DILLO', 'Acting Secretary to the Sangguniang Panlalawigan', 'Office of the Secretary of the Sangguniang Panlalawigan', 'supervisor'],
     ['SAPIA S. LUMINOG, CPA', 'Provincial Accountant', 'Provincial Accounting Office', 'supervisor'],
-    ['EDWIN B. VILLADOLID', 'Provincial Assessor', 'Provincial Assessor Office', 'supervisor'],
-    ['RAMIL ROY D. TIOLO', 'Provincial Budget Officer', 'Provincial Budget Office', 'supervisor'],
+    ['ENGR. EDWIN B. VILLADOLID', 'Provincial Assessor', 'Provincial Assessor Office', 'supervisor'],
+    ['RAMIL ROY D. TIOLO, EnP, JD, MPA', 'Provincial Budget Officer', 'Provincial Budget Office', 'supervisor'],
     ['MUSLIMIN Z. PAGLALA', "Acting Prov'l Disaster Risk Reduction & Mngt. Officer", 'Provincial Disaster Risk Reduction & Management', 'supervisor'],
     ['ENGR. MOHAMMED D. SAMPULNA', 'Provincial Engineer', 'Provincial Engineer Office', 'supervisor'],
-    ['MUSTAPHA S. NUR', 'Provincial General Services Officer', 'Provincial General Services Office', 'supervisor'],
+    ['MUSTAPHA S. NUR, JD', 'Provincial General Services Officer', 'Provincial General Services Office', 'supervisor'],
     ['MONINA K. MACARONGON, MPA', "Prov'l Human Resource Mngt. Officer", 'Provincial Human Resource Management Office', 'certifier'],
     ['ENGR. FATIMA U. BANSUAN, EnP', "Prov'l Planning and Devt. Coordinator", 'Provincial Planning and Development Office', 'supervisor'],
     ['AMRAIDA P. MAMALUBA', 'Provincial Treasurer', 'Provincial Treasurer Office', 'supervisor'],
     ['HADDAH M. GAYAK', 'Acting Provincial Tourism Officer', 'Provincial Tourism Office', 'supervisor'],
-    ['DR. YUSOFF ADRIAN C. ABAS, MPA', 'Provincial Veterinarian', 'Provincial Veterinarian Office', 'supervisor']
+    ['DR. YUSOFF ADRIAN C. ABAS', 'Provincial Veterinarian', 'Provincial Veterinarian Office', 'supervisor']
   ]
   db.transaction(() => {
     for (const [name, pos, off, role] of seedSignatories) {
@@ -466,7 +466,7 @@ const handlers: Api = {
   async deleteSignatory(id) {
     db.prepare('DELETE FROM signatories WHERE id = ?').run(id)
   },
-  async printToPdf() {}
+  async printToPdf() { }
 }
 
 ipcMain.handle('db', async (event, method: string, ...args: unknown[]) => {
