@@ -95,7 +95,12 @@ export default function EmployeeDetail(): React.JSX.Element {
           <tbody>
             {mine.map((l) => (
               <tr key={l.id}>
-                <td>{l.type_name}</td>
+                <td>
+                  <div>{l.type_name}</div>
+                  {l.sub_type && l.sub_type !== l.type_name && (
+                    <div className="text-xs text-slate-400">{l.sub_type}</div>
+                  )}
+                </td>
                 <td>
                   {l.start_date} → {l.end_date}
                 </td>

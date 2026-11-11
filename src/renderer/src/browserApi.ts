@@ -14,18 +14,7 @@ const set = (k: string, v: unknown): void => localStorage.setItem(k, JSON.string
 
 const defaultTypes: LeaveType[] = [
   { id: 1, name: 'Vacation Leave', annual_days: 15, accrues_monthly: 1, carry_over_cap: 100, prorate_new_hires: 1 },
-  { id: 2, name: 'Mandatory/Forced Leave', annual_days: 5, accrues_monthly: 0, carry_over_cap: 0, prorate_new_hires: 0 },
-  { id: 3, name: 'Sick Leave', annual_days: 15, accrues_monthly: 1, carry_over_cap: 100, prorate_new_hires: 1 },
-  { id: 4, name: 'Maternity Leave', annual_days: 105, accrues_monthly: 0, carry_over_cap: 0, prorate_new_hires: 0 },
-  { id: 5, name: 'Paternity Leave', annual_days: 7, accrues_monthly: 0, carry_over_cap: 0, prorate_new_hires: 0 },
-  { id: 6, name: 'Special Privilege Leave', annual_days: 3, accrues_monthly: 0, carry_over_cap: 0, prorate_new_hires: 0 },
-  { id: 7, name: 'Solo Parent Leave', annual_days: 7, accrues_monthly: 0, carry_over_cap: 0, prorate_new_hires: 0 },
-  { id: 8, name: 'Study Leave', annual_days: 180, accrues_monthly: 0, carry_over_cap: 0, prorate_new_hires: 0 },
-  { id: 9, name: '10-Day VAWC Leave', annual_days: 10, accrues_monthly: 0, carry_over_cap: 0, prorate_new_hires: 0 },
-  { id: 10, name: 'Rehabilitation Privilege', annual_days: 180, accrues_monthly: 0, carry_over_cap: 0, prorate_new_hires: 0 },
-  { id: 11, name: 'Special Leave Benefits for Women', annual_days: 60, accrues_monthly: 0, carry_over_cap: 0, prorate_new_hires: 0 },
-  { id: 12, name: 'Special Emergency (Calamity) Leave', annual_days: 3, accrues_monthly: 0, carry_over_cap: 0, prorate_new_hires: 0 },
-  { id: 13, name: 'Adoption Leave', annual_days: 60, accrues_monthly: 0, carry_over_cap: 0, prorate_new_hires: 0 }
+  { id: 2, name: 'Sick Leave', annual_days: 15, accrues_monthly: 1, carry_over_cap: 100, prorate_new_hires: 1 }
 ]
 
 const defaultEmps: Employee[] = [
@@ -59,11 +48,31 @@ function getEmployees(): Employee[] {
 }
 
 function getTypes(): LeaveType[] {
-  return get('lm_types', defaultTypes)
+  const types = get('lm_types', defaultTypes)
+  const filtered = types.filter((t) => t.name === 'Vacation Leave' || t.name === 'Sick Leave')
+  if (filtered.length !== types.length || filtered.length === 0) {
+    set('lm_types', defaultTypes)
+    return defaultTypes
+  }
+  return filtered
 }
 
-function getLeaves(): (Leave & { id: number; days: number; created_at: string })[] {
-  return get('lm_leaves', [])
+type BrowserLeave = Leave & { id: number; days: number; created_at: string; sub_type?: string }
+
+function getLeaves(): BrowserLeave[] {
+  const leaves = get<BrowserLeave[]>('lm_leaves', [])
+  let modified = false
+  for (const l of leaves) {
+    if (l.leave_type_id !== 1 && l.leave_type_id !== 2) {
+      if (!l.sub_type) {
+        l.sub_type = 'Vacation Leave'
+      }
+      l.leave_type_id = 1
+      modified = true
+    }
+  }
+  if (modified) set('lm_leaves', leaves)
+  return leaves
 }
 
 function getStartingBalanceMap(): Record<string, number> {
@@ -242,19 +251,20 @@ export const browserApi: Api = {
 
     if (l.id) {
       const idx = leaves.findIndex((x) => x.id === l.id)
-      if (idx !== -1) leaves[idx] = { ...leaves[idx], ...l, days, status, reason: l.reason ?? '' }
+      if (idx !== -1) leaves[idx] = { ...leaves[idx], ...l, sub_type: l.sub_type ?? '', days, status, reason: l.reason ?? '' }
       logAction('Update Leave', `Updated leave #${l.id} for ${e.name}: ${l.start_date} → ${l.end_date} (${days}d)`)
     } else {
       const id = leaves.reduce((m, x) => Math.max(m, x.id), 0) + 1
       leaves.push({
         ...l,
         id,
+        sub_type: l.sub_type ?? '',
         days,
         status,
         reason: l.reason ?? '',
         created_at: new Date().toISOString().replace('T', ' ').slice(0, 19)
       })
-      logAction('Create Leave', `Created ${status} leave for ${e.name}: ${t.name} (${l.start_date} → ${l.end_date}, ${days}d)`)
+      logAction('Create Leave', `Created ${status} leave for ${e.name}: ${t.name}${l.sub_type ? ` (${l.sub_type})` : ''} (${l.start_date} → ${l.end_date}, ${days}d)`)
     }
     set('lm_leaves', leaves)
   },

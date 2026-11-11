@@ -18,17 +18,37 @@ export interface LeaveType {
   prorate_new_hires: number
 }
 
+export const VACATION_SUB_TYPES = [
+  'Vacation Leave',
+  'Mandatory/Forced Leave',
+  'Maternity Leave',
+  'Paternity Leave',
+  'Special Privilege Leave',
+  'Solo Parent Leave',
+  'Study Leave',
+  '10-Day VAWC Leave',
+  'Rehabilitation Privilege',
+  'Special Leave Benefits for Women',
+  'Special Emergency (Calamity) Leave',
+  'Adoption Leave',
+  'Others'
+] as const
+
+export type VacationSubType = (typeof VACATION_SUB_TYPES)[number]
+
 export interface Leave {
   id?: number
   employee_id: number
   leave_type_id: number
+  sub_type?: string
   start_date: string
   end_date: string
   status: Status
   reason: string
 }
 
-export interface LeaveRow extends Required<Leave> {
+export interface LeaveRow extends Required<Omit<Leave, 'sub_type'>> {
+  sub_type?: string
   days: number
   created_at: string
   employee_name: string

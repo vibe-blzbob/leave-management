@@ -54,6 +54,7 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS leaves (
     id INTEGER PRIMARY KEY, employee_id INTEGER NOT NULL REFERENCES employees(id),
     leave_type_id INTEGER NOT NULL REFERENCES leave_types(id),
+    sub_type TEXT,
     start_date TEXT NOT NULL, end_date TEXT NOT NULL, days INTEGER NOT NULL,
     status TEXT NOT NULL CHECK (status IN ('pending','approved','rejected','cancelled')),
     reason TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL DEFAULT (datetime('now','localtime')));
@@ -80,6 +81,9 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_leaves_dates ON leaves (start_date, end_date);
 `)
 
+try {
+  db.exec(`ALTER TABLE leaves ADD COLUMN sub_type TEXT`)
+} catch { }
 try {
   db.exec(`ALTER TABLE signatories ADD COLUMN position TEXT NOT NULL DEFAULT ''`)
 } catch { }
@@ -120,19 +124,33 @@ db.exec(`
   UPDATE leave_types SET name = 'Sick Leave' WHERE name = 'Sick';
   INSERT OR IGNORE INTO leave_types (name, annual_days, accrues_monthly, carry_over_cap, prorate_new_hires) VALUES
     ('Vacation Leave', 15, 1, 100, 1),
-    ('Mandatory/Forced Leave', 5, 0, 0, 0),
-    ('Sick Leave', 15, 1, 100, 1),
-    ('Maternity Leave', 105, 0, 0, 0),
-    ('Paternity Leave', 7, 0, 0, 0),
-    ('Special Privilege Leave', 3, 0, 0, 0),
-    ('Solo Parent Leave', 7, 0, 0, 0),
-    ('Study Leave', 180, 0, 0, 0),
-    ('10-Day VAWC Leave', 10, 0, 0, 0),
-    ('Rehabilitation Privilege', 180, 0, 0, 0),
-    ('Special Leave Benefits for Women', 60, 0, 0, 0),
-    ('Special Emergency (Calamity) Leave', 3, 0, 0, 0),
-    ('Adoption Leave', 60, 0, 0, 0);
+    ('Sick Leave', 15, 1, 100, 1);
 `)
+try {
+  db.exec(`
+    UPDATE leaves
+    SET sub_type = (SELECT name FROM leave_types WHERE id = leaves.leave_type_id),
+        leave_type_id = (SELECT id FROM leave_types WHERE name = 'Vacation Leave')
+    WHERE leave_type_id NOT IN (
+      SELECT id FROM leave_types WHERE name IN ('Vacation Leave', 'Sick Leave')
+    );
+
+    UPDATE leaves
+    SET sub_type = 'Vacation Leave'
+    WHERE leave_type_id = (SELECT id FROM leave_types WHERE name = 'Vacation Leave')
+      AND (sub_type IS NULL OR sub_type = '');
+
+    DELETE FROM starting_balances
+    WHERE leave_type_id NOT IN (
+      SELECT id FROM leave_types WHERE name IN ('Vacation Leave', 'Sick Leave')
+    );
+
+    DELETE FROM leave_types
+    WHERE name NOT IN ('Vacation Leave', 'Sick Leave');
+  `)
+} catch (err) {
+  console.error('Leave types consolidation error:', err)
+}
 db.exec(`
   UPDATE employees SET department = 'Office of the Provincial Administrator' WHERE department = 'Provincial Administrator''s Office';
 `)
@@ -356,19 +374,19 @@ const handlers: Api = {
         ? 'approved'
         : 'pending'
     if (status !== 'pending' && status !== 'approved') throw new Error(`Cannot edit ${status} leave.`)
-    const p = { ...l, status, reason: l.reason ?? '', days: validate({ ...l, status }) }
+    const p = { ...l, sub_type: l.sub_type ?? '', status, reason: l.reason ?? '', days: validate({ ...l, status }) }
     const emp = getEmployee(l.employee_id)
     const type = getType(l.leave_type_id)
     if (l.id) {
       db.prepare(
-        'UPDATE leaves SET employee_id=@employee_id, leave_type_id=@leave_type_id, start_date=@start_date, end_date=@end_date, days=@days, reason=@reason WHERE id=@id'
+        'UPDATE leaves SET employee_id=@employee_id, leave_type_id=@leave_type_id, sub_type=@sub_type, start_date=@start_date, end_date=@end_date, days=@days, reason=@reason WHERE id=@id'
       ).run(p)
       logAction('Update Leave', `Updated leave #${l.id} for ${emp?.name}: ${l.start_date} → ${l.end_date} (${p.days}d)`)
     } else {
       db.prepare(
-        'INSERT INTO leaves (employee_id, leave_type_id, start_date, end_date, days, status, reason) VALUES (@employee_id, @leave_type_id, @start_date, @end_date, @days, @status, @reason)'
+        'INSERT INTO leaves (employee_id, leave_type_id, sub_type, start_date, end_date, days, status, reason) VALUES (@employee_id, @leave_type_id, @sub_type, @start_date, @end_date, @days, @status, @reason)'
       ).run(p)
-      logAction('Create Leave', `Created ${status} leave for ${emp?.name}: ${type?.name} (${l.start_date} → ${l.end_date}, ${p.days}d)`)
+      logAction('Create Leave', `Created ${status} leave for ${emp?.name}: ${type?.name}${l.sub_type ? ` (${l.sub_type})` : ''} (${l.start_date} → ${l.end_date}, ${p.days}d)`)
     }
   },
   async setLeaveStatus(id, status) {

@@ -18,12 +18,9 @@ export function LeaveTypesModule(): React.JSX.Element {
         <div>
           <h2 className="text-xl font-semibold text-white">Leave Types</h2>
           <p className="text-sm text-slate-400">
-            Leave year is Jan–Dec. Accrual is credited on the 1st of each month. Carry-over applies on Jan 1.
+            Primary leave types (Vacation Leave & Sick Leave). All sub-classes deduct from the Vacation Leave balance pool.
           </p>
         </div>
-        <button className="btn" onClick={() => setEditing({ accrues_monthly: 1, prorate_new_hires: 1, carry_over_cap: 0 })}>
-          + Add type
-        </button>
       </div>
 
       <div className="card overflow-x-auto p-0">
@@ -50,14 +47,16 @@ export function LeaveTypesModule(): React.JSX.Element {
                   <button className="btn btn-ghost" onClick={() => setEditing(t)}>
                     Edit
                   </button>
-                  <button
-                    className="btn btn-danger"
-                    onClick={() =>
-                      confirm(`Delete "${t.name}"?`) && api.deleteType(t.id!).then(reloadTypes, (e) => alert(errMsg(e)))
-                    }
-                  >
-                    Delete
-                  </button>
+                  {t.name !== 'Vacation Leave' && t.name !== 'Sick Leave' && (
+                    <button
+                      className="btn btn-danger"
+                      onClick={() =>
+                        confirm(`Delete "${t.name}"?`) && api.deleteType(t.id!).then(reloadTypes, (e) => alert(errMsg(e)))
+                      }
+                    >
+                      Delete
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

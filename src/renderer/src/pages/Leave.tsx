@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { api, Badge, DateRangeInput, errMsg, formatDate, formData, invalidateBalancesCache, Modal, useLoad } from '../lib'
 import type { Employee, Leave as LeaveT, LeaveRow, LeaveType, Status } from '../../../shared/types'
+import { VACATION_SUB_TYPES } from '../../../shared/types'
 
 const tabs = ['all', 'pending', 'approved', 'rejected', 'cancelled'] as const
 
@@ -143,7 +144,10 @@ export default function Leave(): React.JSX.Element {
                   <div className="text-xs text-slate-400 mt-0.5">{l.department.trim() || 'General'}</div>
                 </td>
                 <td className="py-3 text-slate-200 font-medium">
-                  {l.type_name}
+                  <div>{l.type_name}</div>
+                  {l.sub_type && l.sub_type !== l.type_name && (
+                    <div className="text-xs text-slate-400 font-normal">{l.sub_type}</div>
+                  )}
                 </td>
                 <td className="py-3 text-slate-300">
                   <div className="font-medium text-xs leading-tight">
@@ -443,6 +447,15 @@ function LeaveForm(props: {
   const [types] = useLoad(api.listTypes, [] as LeaveType[])
   const [err, setErr] = useState('')
   const [dept, setDept] = useState('')
+  const [selectedTypeId, setSelectedTypeId] = useState<number | ''>(l.leave_type_id ?? '')
+  const [subType, setSubType] = useState<string>(l.sub_type || 'Vacation Leave')
+
+  useEffect(() => {
+    if (selectedTypeId === '' && types.length > 0) {
+      const defaultType = types.find((t) => t.name.toLowerCase().includes('vacation')) || types[0]
+      setSelectedTypeId(defaultType.id ?? '')
+    }
+  }, [types, selectedTypeId])
 
   useEffect(() => {
     if (l.employee_id && employees.length && !dept) {
@@ -450,6 +463,9 @@ function LeaveForm(props: {
       if (emp?.department) setDept(emp.department.trim() || 'General')
     }
   }, [l.employee_id, employees, dept])
+
+  const selectedType = types.find((t) => t.id === Number(selectedTypeId))
+  const isVacation = selectedType?.name.toLowerCase().includes('vacation')
 
   const departments = useMemo(
     () => [...new Set(employees.map((e) => e.department.trim() || 'General').filter(Boolean))].sort(),
@@ -477,6 +493,7 @@ function LeaveForm(props: {
               id: l.id,
               employee_id: +f.employee_id,
               leave_type_id: +f.leave_type_id,
+              sub_type: isVacation ? (subType || 'Vacation Leave') : undefined,
               start_date: f.start_date,
               end_date: f.end_date,
               reason: f.reason,
@@ -513,7 +530,13 @@ function LeaveForm(props: {
         </label>
         <label className="label">
           Leave type
-          <select key={types.length} className="input" name="leave_type_id" defaultValue={l.leave_type_id} required>
+          <select
+            className="input"
+            name="leave_type_id"
+            value={selectedTypeId}
+            onChange={(e) => setSelectedTypeId(Number(e.target.value))}
+            required
+          >
             {types.map((t) => (
               <option key={t.id} value={t.id}>
                 {t.name}
@@ -521,6 +544,23 @@ function LeaveForm(props: {
             ))}
           </select>
         </label>
+        {isVacation && (
+          <label className="label">
+            Vacation Leave Sub-class
+            <select
+              className="input"
+              name="sub_type"
+              value={subType}
+              onChange={(e) => setSubType(e.target.value)}
+            >
+              {VACATION_SUB_TYPES.map((st) => (
+                <option key={st} value={st}>
+                  {st}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         <label className="label">
           Leave Dates
           <DateRangeInput defaultStart={l.start_date} defaultEnd={l.end_date} />

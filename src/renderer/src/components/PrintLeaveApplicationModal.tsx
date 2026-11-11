@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import type { Employee, LeaveRow, Signatory } from '../../../shared/types'
+import type { Employee, LeaveRow, LeaveType, Signatory } from '../../../shared/types'
 import { api, errMsg, useLoad } from '../lib'
 import maguindanaoLogo from '../assets/maguindanao_del_norte.jpg'
 import bangsamoroLogo from '../assets/bangsamoro.png'
@@ -11,6 +11,7 @@ export interface PrintModalProps {
 }
 
 export function PrintLeaveApplicationModal({ leave, employee, onClose }: PrintModalProps): React.JSX.Element {
+  const [types] = useLoad(api.listTypes, [] as LeaveType[])
   const [signatories] = useLoad(api.listSignatories, [] as Signatory[])
   const [balances] = useLoad(() => api.balances(new Date().getFullYear()), [])
 
@@ -89,11 +90,14 @@ export function PrintLeaveApplicationModal({ leave, employee, onClose }: PrintMo
     [balances, employee.id]
   )
 
-  const vlBal = empBalances.find((b) => b.leave_type_id === 1) // Vacation Leave
-  const slBal = empBalances.find((b) => b.leave_type_id === 2 || b.leave_type_id === 3) // Sick Leave
+  const vlType = types.find((t) => t.name.toLowerCase().includes('vacation'))
+  const slType = types.find((t) => t.name.toLowerCase().includes('sick'))
 
-  const isVl = leave.type_name?.toLowerCase().includes('vacation') || leave.type_name?.toLowerCase().includes('forced')
+  const vlBal = empBalances.find((b) => b.leave_type_id === (vlType?.id ?? 1)) // Vacation Leave
+  const slBal = empBalances.find((b) => b.leave_type_id === (slType?.id ?? 2) || b.leave_type_id === 3) // Sick Leave
+
   const isSl = leave.type_name?.toLowerCase().includes('sick')
+  const isVl = !isSl
 
   const vlTotal = vlBal?.accrued ?? 0
   const vlLess = isVl ? leave.days : 0
@@ -437,26 +441,33 @@ export function PrintLeaveApplicationModal({ leave, employee, onClose }: PrintMo
                       <td className="w-1/2 p-2 align-top space-y-1.5 border-r border-black">
                         <div className="font-bold text-[10.5px] mb-1">6.A TYPE OF LEAVE TO BE AVAILED OF</div>
 
-                        <LeaveCheckbox label="Vacation Leave (Sec. 51, Rule XVI, Omnibus Rules Implementing E.O. No. 292)" checked={leave.type_name === 'Vacation Leave'} />
-                        <LeaveCheckbox label="Mandatory/Forced Leave (Sec. 25, Rule XVI, Omnibus Rules Implementing E.O. No. 292)" checked={leave.type_name?.toLowerCase().includes('forced')} />
-                        <LeaveCheckbox label="Sick Leave (Sec. 43, Rule XVI, Omnibus Rules Implementing E.O. No. 292)" checked={leave.type_name === 'Sick Leave'} />
-                        <LeaveCheckbox label="Maternity Leave (R.A. No. 11210 / IRR issued by CSC, DOLE and SSS)" checked={leave.type_name?.toLowerCase().includes('maternity')} />
-                        <LeaveCheckbox label="Paternity Leave (R.A. No. 8187 / CSC MC No. 71, s. 1998, as amended)" checked={leave.type_name?.toLowerCase().includes('paternity')} />
-                        <LeaveCheckbox label="Special Privilege Leave (Sec. 21, Rule XVI, Omnibus Rules Implementing E.O. No. 292)" checked={leave.type_name?.toLowerCase().includes('special privilege')} />
-                        <LeaveCheckbox label="Solo Parent Leave (RA No. 8972 / CSC MC No. 8, s. 2004)" checked={leave.type_name?.toLowerCase().includes('solo parent')} />
-                        <LeaveCheckbox label="Study Leave (Sec. 68, Rule XVI, Omnibus Rules Implementing E.O. No. 292)" checked={leave.type_name?.toLowerCase().includes('study')} />
-                        <LeaveCheckbox label="10-Day VAWC Leave (RA No. 9262 / CSC MC No. 15, s. 2005)" checked={leave.type_name?.toLowerCase().includes('vawc')} />
-                        <LeaveCheckbox label="Rehabilitation Privilege (Sec. 55, Rule XVI, Omnibus Rules Implementing E.O. No. 292)" checked={leave.type_name?.toLowerCase().includes('rehabilitation')} />
-                        <LeaveCheckbox label="Special Leave Benefits for Women (RA No. 9710 / CSC MC No. 25, s. 2010)" checked={leave.type_name?.toLowerCase().includes('women')} />
-                        <LeaveCheckbox label="Special Emergency (Calamity) Leave (CSC MC No. 2, s. 2012, as amended)" checked={leave.type_name?.toLowerCase().includes('calamity')} />
-                        <LeaveCheckbox label="Adoption Leave (R.A. No. 8552)" checked={leave.type_name?.toLowerCase().includes('adoption')} />
+                        {(() => {
+                          const m = (leave.sub_type || leave.type_name || '').toLowerCase()
+                          return (
+                            <>
+                              <LeaveCheckbox label="Vacation Leave (Sec. 51, Rule XVI, Omnibus Rules Implementing E.O. No. 292)" checked={m === 'vacation leave' || m === 'standard vacation leave'} />
+                              <LeaveCheckbox label="Mandatory/Forced Leave (Sec. 25, Rule XVI, Omnibus Rules Implementing E.O. No. 292)" checked={m.includes('forced')} />
+                              <LeaveCheckbox label="Sick Leave (Sec. 43, Rule XVI, Omnibus Rules Implementing E.O. No. 292)" checked={m.includes('sick')} />
+                              <LeaveCheckbox label="Maternity Leave (R.A. No. 11210 / IRR issued by CSC, DOLE and SSS)" checked={m.includes('maternity')} />
+                              <LeaveCheckbox label="Paternity Leave (R.A. No. 8187 / CSC MC No. 71, s. 1998, as amended)" checked={m.includes('paternity')} />
+                              <LeaveCheckbox label="Special Privilege Leave (Sec. 21, Rule XVI, Omnibus Rules Implementing E.O. No. 292)" checked={m.includes('special privilege')} />
+                              <LeaveCheckbox label="Solo Parent Leave (RA No. 8972 / CSC MC No. 8, s. 2004)" checked={m.includes('solo parent')} />
+                              <LeaveCheckbox label="Study Leave (Sec. 68, Rule XVI, Omnibus Rules Implementing E.O. No. 292)" checked={m.includes('study')} />
+                              <LeaveCheckbox label="10-Day VAWC Leave (RA No. 9262 / CSC MC No. 15, s. 2005)" checked={m.includes('vawc')} />
+                              <LeaveCheckbox label="Rehabilitation Privilege (Sec. 55, Rule XVI, Omnibus Rules Implementing E.O. No. 292)" checked={m.includes('rehabilitation')} />
+                              <LeaveCheckbox label="Special Leave Benefits for Women (RA No. 9710 / CSC MC No. 25, s. 2010)" checked={m.includes('women')} />
+                              <LeaveCheckbox label="Special Emergency (Calamity) Leave (CSC MC No. 2, s. 2012, as amended)" checked={m.includes('calamity')} />
+                              <LeaveCheckbox label="Adoption Leave (R.A. No. 8552)" checked={m.includes('adoption')} />
 
-                        <div className="pt-1">
-                          <span className="font-semibold">Others:</span>
-                          <span className="border-b border-black inline-block w-40 ml-1">
-                            {!isKnownType(leave.type_name) ? leave.type_name : ''}
-                          </span>
-                        </div>
+                              <div className="pt-1">
+                                <span className="font-semibold">Others:</span>
+                                <span className="border-b border-black inline-block w-40 ml-1">
+                                  {!isKnownType(leave.sub_type || leave.type_name) ? (leave.sub_type || leave.type_name) : ''}
+                                </span>
+                              </div>
+                            </>
+                          )
+                        })()}
                       </td>
 
                       {/* 6.B: Details of Leave */}

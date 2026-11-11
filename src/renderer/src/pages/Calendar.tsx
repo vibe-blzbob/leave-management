@@ -6,6 +6,7 @@ import type { EventClickArg, EventDropArg } from '@fullcalendar/core'
 import { Link } from 'react-router-dom'
 import { api, Badge, DateRangeInput, errMsg, formData, invalidateBalancesCache, Modal, useLoad } from '../lib'
 import type { Employee, LeaveRow, LeaveType } from '../../../shared/types'
+import { VACATION_SUB_TYPES } from '../../../shared/types'
 import { EmployeeSearchSelect } from './Leave'
 
 function formatDate(val: string | Date | undefined): string {
@@ -33,6 +34,11 @@ export default function CalendarPage(): React.JSX.Element {
   const [formDept, setFormDept] = useState('')
   const [formErr, setFormErr] = useState('')
   const [saving, setSaving] = useState(false)
+  const [calTypeId, setCalTypeId] = useState<number | ''>('')
+  const [calSubType, setCalSubType] = useState<string>('Vacation Leave')
+
+  const activeTypeId = Number(calTypeId || types[0]?.id)
+  const isCalVacation = (types.find((t) => t.id === activeTypeId)?.name || '').toLowerCase().includes('vacation')
 
   const events = useMemo(
     () =>
@@ -40,7 +46,7 @@ export default function CalendarPage(): React.JSX.Element {
         .filter((l) => l.status === 'approved' || l.status === 'pending')
         .map((l) => ({
           id: String(l.id),
-          title: `${l.employee_name} · ${l.type_name}${l.status === 'pending' ? ' (pending)' : ''}`,
+          title: `${l.employee_name} · ${l.type_name}${l.sub_type && l.sub_type !== l.type_name ? ` (${l.sub_type})` : ''}${l.status === 'pending' ? ' (pending)' : ''}`,
           start: l.start_date,
           end: shift(l.end_date, 1),
           allDay: true,
@@ -101,7 +107,8 @@ export default function CalendarPage(): React.JSX.Element {
     try {
       await api.saveLeave({
         employee_id: +f.employee_id,
-        leave_type_id: +f.leave_type_id,
+        leave_type_id: activeTypeId,
+        sub_type: isCalVacation ? (calSubType || 'Vacation Leave') : undefined,
         start_date: f.start_date,
         end_date: f.end_date,
         reason: f.reason,
@@ -271,7 +278,13 @@ export default function CalendarPage(): React.JSX.Element {
                 {/* Leave Type */}
                 <label className="text-xs">
                   <span className="text-slate-400 mb-1 block">Leave Type *</span>
-                  <select className="input text-xs" name="leave_type_id" required defaultValue={types[0]?.id}>
+                  <select
+                    className="input text-xs"
+                    name="leave_type_id"
+                    required
+                    value={activeTypeId || ''}
+                    onChange={(e) => setCalTypeId(Number(e.target.value))}
+                  >
                     {types.map((t) => (
                       <option key={t.id} value={t.id}>
                         {t.name}
@@ -279,6 +292,24 @@ export default function CalendarPage(): React.JSX.Element {
                     ))}
                   </select>
                 </label>
+
+                {isCalVacation && (
+                  <label className="text-xs">
+                    <span className="text-slate-400 mb-1 block">Vacation Leave Sub-class</span>
+                    <select
+                      className="input text-xs"
+                      name="sub_type"
+                      value={calSubType}
+                      onChange={(e) => setCalSubType(e.target.value)}
+                    >
+                      {VACATION_SUB_TYPES.map((st) => (
+                        <option key={st} value={st}>
+                          {st}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )}
 
                 {/* Leave Dates */}
                 <label className="text-xs">
