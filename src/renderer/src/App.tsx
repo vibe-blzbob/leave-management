@@ -16,7 +16,7 @@ const nav = [
 export default function Layout(): React.JSX.Element {
   const navigate = useNavigate()
   const location = useLocation()
-  const isPrintPage = location.pathname.endsWith('/print')
+  const isPrintPage = location.pathname.includes('/print')
 
   useEffect(() => {
     prefetchReports()

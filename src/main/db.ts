@@ -495,8 +495,10 @@ ipcMain.handle('db', async (event, method: string, ...args: unknown[]) => {
   if (!isAllowed) throw new Error('Unauthorized IPC sender')
   if (!(methods as readonly string[]).includes(method)) throw new Error(`Unknown method ${method}`)
   if (method === 'printToPdf') {
+    const opts = (args[1] || {}) as { landscape?: boolean }
+    const isLandscape = Boolean(opts.landscape)
     const buffer = await event.sender.printToPDF({
-      pageSize: { width: 8.5, height: 13 },
+      pageSize: isLandscape ? { width: 13, height: 8.5 } : { width: 8.5, height: 13 },
       margins: { top: 0, bottom: 0, left: 0, right: 0 },
       printBackground: true
     })

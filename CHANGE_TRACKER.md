@@ -10,6 +10,7 @@ Track changes to the system. Entries are strictly partitioned into what ships in
 | ID | Date | Area / Feature | Description | Affected Files / Tables | Status |
 |---|---|---|---|---|---|
 | PATCH-001 | 2026-11-11 | Leave Types | Consolidated into 2 primary types (Vacation & Sick). Sub-types selectable via dropdown when Vacation Leave chosen. Unified VL balance deduction and CS Form 6 mapping. | `src/shared/types.ts`, `src/main/db.ts`, `src/renderer/src/pages/Leave.tsx`, `Calendar.tsx`, `PrintLeave.tsx` | Ready for Patch |
+| PATCH-002 | 2026-11-11 | Reports / Printing | Official CSC Employee's Leave Card with 26-row dual Vacation & Sick Leave ledger, monthly accruals (1.25/mo), Folio landscape printing, accessible via Employee Detail and Reports (supporting single employee or whole department batch printing). | `src/renderer/src/pages/PrintLeaveCard.tsx`, `App.tsx`, `main.tsx`, `EmployeeDetail.tsx`, `Reports.tsx`, `src/main/db.ts`, `src/shared/types.ts` | Ready for Patch |
 
 ### Patch Inclusion Criteria
 - [x] Direct fix or user-requested capability for existing installations.
@@ -25,6 +26,7 @@ Track changes to the system. Entries are strictly partitioned into what ships in
 |---|---|---|---|---|---|
 | INT-001 | 2026-11-11 | Docs / Tracking | Initialize intent documentation and system change tracker ledger. | `docs/intent/change-tracker.md`, `CHANGE_TRACKER.md` | Done |
 | INT-002 | 2026-11-11 | Docs / Intent | Save confirmed statement of intent for 2 primary leave types & vacation sub-types. | `docs/intent/leave-subtypes.md` | Done |
+| INT-003 | 2026-11-11 | Tooling / Release | Added standalone micro-patch installer builder (`scripts/build-patch.js`, `build-patch.bat`). Compiles only changed application code into a lightweight update executable. | `scripts/build-patch.js`, `build-patch.bat`, `package.json` | Done |
 
 ---
 

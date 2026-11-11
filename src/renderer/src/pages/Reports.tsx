@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { api, DateInput, downloadCsv, errMsg, getCachedBalances, invalidateBalancesCache, Modal, num, prefetchReports, useLoad } from '../lib'
 import type { Balance, Employee, LeaveRow, LeaveType } from '../../../shared/types'
 
@@ -9,7 +10,13 @@ export default function Reports(): React.JSX.Element {
   const [leaves] = useLoad(api.listLeaves, [] as LeaveRow[])
   const [year, setYear] = useState(new Date().getFullYear())
   const [balances, setBalances] = useState<Balance[]>(() => getCachedBalances<Balance>(year) ?? [])
+  const navigate = useNavigate()
   const [editingEmp, setEditingEmp] = useState<Employee | null>(null)
+  const [showLeaveCardModal, setShowLeaveCardModal] = useState(false)
+  const [cardScope, setCardScope] = useState<'department' | 'employee'>('department')
+  const [cardDept, setCardDept] = useState('')
+  const [cardEmpId, setCardEmpId] = useState('')
+  const [cardYear, setCardYear] = useState(year)
   const [f, setF] = useState({ from: `${year}-01-01`, to: `${year}-12-31`, employee: '', department: '', leaveTypeId: '' })
   useEffect(() => {
     prefetchReports(year).then(setBalances)
@@ -60,9 +67,20 @@ export default function Reports(): React.JSX.Element {
     <div className="space-y-6">
       <div className="no-print flex items-center justify-between">
         <h1>Reports</h1>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button className="btn btn-ghost" onClick={csv}>
             Export CSV
+          </button>
+          <button
+            className="btn btn-ghost flex items-center gap-1.5"
+            onClick={() => {
+              setCardDept(f.department || '')
+              setCardEmpId(f.employee || '')
+              setCardYear(year)
+              setShowLeaveCardModal(true)
+            }}
+          >
+            📑 Print Leave Cards
           </button>
           <button className="btn" onClick={() => window.print()}>
             Print
@@ -188,7 +206,14 @@ export default function Reports(): React.JSX.Element {
                           <td>{num(b.used)}</td>
                           <td>{num(b.pending)}</td>
                           <td className="font-semibold">{num(b.remaining)}</td>
-                          <td className="text-right no-print">
+                          <td className="text-right no-print space-x-1 whitespace-nowrap">
+                            <button
+                              title="Print Employee Leave Card"
+                              className="btn btn-ghost text-xs"
+                              onClick={() => navigate(`/leave-card/print?employeeId=${b.employee_id}&year=${year}`)}
+                            >
+                              📑 Card
+                            </button>
                             <button
                               className="btn btn-ghost text-xs"
                               onClick={() => setEditingEmp(employees.find((e) => e.id === b.employee_id) ?? null)}
@@ -250,6 +275,109 @@ export default function Reports(): React.JSX.Element {
             )
           })}
       </div>
+
+      {showLeaveCardModal && (
+        <Modal title="Print Employee's Leave Card (CSC Form)" onClose={() => setShowLeaveCardModal(false)}>
+          <div className="space-y-4">
+            <p className="text-xs text-slate-400">
+              Generate the official Civil Service Employee&apos;s Leave Card with 26-row dual Vacation &amp; Sick Leave ledgers.
+            </p>
+
+            <div className="flex gap-4 p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+              <label className="flex items-center gap-2 text-sm text-slate-200 cursor-pointer">
+                <input
+                  type="radio"
+                  name="scope"
+                  checked={cardScope === 'department'}
+                  onChange={() => setCardScope('department')}
+                />
+                Whole Department
+              </label>
+              <label className="flex items-center gap-2 text-sm text-slate-200 cursor-pointer">
+                <input
+                  type="radio"
+                  name="scope"
+                  checked={cardScope === 'employee'}
+                  onChange={() => setCardScope('employee')}
+                />
+                Single Employee
+              </label>
+            </div>
+
+            <label className="label">
+              Calendar Year
+              <input
+                className="input"
+                type="number"
+                value={cardYear}
+                onChange={(e) => setCardYear(Number(e.target.value))}
+              />
+            </label>
+
+            {cardScope === 'department' ? (
+              <label className="label">
+                Department
+                <select
+                  className="input"
+                  value={cardDept}
+                  onChange={(e) => setCardDept(e.target.value)}
+                >
+                  <option value="">All Departments (All Employees)</option>
+                  {departments.map((d) => (
+                    <option key={d} value={d}>
+                      {d}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ) : (
+              <label className="label">
+                Employee
+                <select
+                  className="input"
+                  value={cardEmpId}
+                  onChange={(e) => setCardEmpId(e.target.value)}
+                >
+                  <option value="">Select Employee…</option>
+                  {employees
+                    .filter((e) => e.active)
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((e) => (
+                      <option key={e.id} value={e.id}>
+                        {e.name} · {e.department || 'General'}
+                      </option>
+                    ))}
+                </select>
+              </label>
+            )}
+
+            <div className="flex justify-end gap-2 pt-3 border-t border-slate-800">
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={() => setShowLeaveCardModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="btn"
+                onClick={() => {
+                  setShowLeaveCardModal(false)
+                  if (cardScope === 'employee') {
+                    const emp = cardEmpId ? cardEmpId : String(employees[0]?.id || '')
+                    navigate(`/leave-card/print?employeeId=${emp}&year=${cardYear}`)
+                  } else {
+                    navigate(`/leave-card/print?department=${encodeURIComponent(cardDept)}&year=${cardYear}&employeeId=all`)
+                  }
+                }}
+              >
+                Open Print View →
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
 
       {editingEmp && (
         <BalanceModal

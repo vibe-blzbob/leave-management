@@ -9,6 +9,7 @@ import Employees from './pages/Employees'
 import EmployeeDetail from './pages/EmployeeDetail'
 import Leave from './pages/Leave'
 import PrintLeave from './pages/PrintLeave'
+import PrintLeaveCard from './pages/PrintLeaveCard'
 import CalendarPage from './pages/Calendar'
 import Reports from './pages/Reports'
 import Logs from './pages/Logs'
@@ -25,6 +26,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path="employees/:id" element={<EmployeeDetail />} />
           <Route path="leave" element={<Leave />} />
           <Route path="leave/:id/print" element={<PrintLeave />} />
+          <Route path="leave-card/print" element={<PrintLeaveCard />} />
           <Route path="calendar" element={<CalendarPage />} />
           <Route path="reports" element={<Reports />} />
           <Route path="logs" element={<Logs />} />

@@ -122,5 +122,5 @@ export interface Api {
   listSignatories(): Promise<Signatory[]>
   saveSignatory(s: Signatory): Promise<void>
   deleteSignatory(id: number): Promise<void>
-  printToPdf(filename?: string): Promise<void>
+  printToPdf(filename?: string, options?: { landscape?: boolean }): Promise<void>
 }

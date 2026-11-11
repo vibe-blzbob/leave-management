@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { api, Badge, num, useLoad } from '../lib'
 import { EmployeeForm } from './Employees'
 import { BalanceModal } from './Reports'
@@ -41,7 +41,13 @@ export default function EmployeeDetail(): React.JSX.Element {
       <section className="card">
         <div className="mb-3 flex items-center justify-between">
           <h2>Balances</h2>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              to={`/leave-card/print?employeeId=${id}&year=${year}`}
+              className="btn btn-ghost text-xs flex items-center gap-1.5 border border-slate-700"
+            >
+              📑 Print Leave Card
+            </Link>
             <button className="btn btn-ghost text-xs" onClick={() => setEditingBal(true)}>
               Edit balances
             </button>
