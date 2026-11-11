@@ -205,11 +205,11 @@ const getEmployee = (id: number): Employee | undefined =>
   db.prepare('SELECT * FROM employees WHERE id = ?').get(id) as Employee | undefined
 const getType = (id: number): LeaveType | undefined =>
   db.prepare('SELECT * FROM leave_types WHERE id = ?').get(id) as LeaveType | undefined
-const getStartBalance = (empId: number, typeId: number): number => {
+const getStartBalance = (empId: number, typeId: number): number | undefined => {
   const r = db
     .prepare('SELECT days FROM starting_balances WHERE employee_id = ? AND leave_type_id = ?')
     .get(empId, typeId) as { days: number } | undefined
-  return r?.days ?? 0
+  return r?.days
 }
 
 /** Balance for one employee/type as of `month` in `year`, optionally ignoring one leave (the one being edited). */
@@ -223,14 +223,15 @@ function balance(e: Employee, t: LeaveType, year: number, month: number, skipId 
     .all(e.id, t.id, skipId) as { y: number; status: Status; d: number }[]
   const sum = (y: number, s: Status): number => rows.find((r) => r.y === y && r.status === s)?.d ?? 0
   const start = getStartBalance(e.id!, t.id!)
-  const carry = Math.max(start, carryOver(t, e.hire_date, year, (y) => sum(y, 'approved'), start))
-  const acc = carry + accrued(t, e.hire_date, year, month)
+  const hasStart = start !== undefined
+  const carry = hasStart ? start : carryOver(t, e.hire_date, year, (y) => sum(y, 'approved'), 0)
+  const acc = hasStart ? start : carry + accrued(t, e.hire_date, year, month)
   const used = sum(year, 'approved')
   return {
     employee_id: e.id!,
     leave_type_id: t.id!,
     carry,
-    entitled: carry + entitlement(t, e.hire_date, year),
+    entitled: hasStart ? start : carry + entitlement(t, e.hire_date, year),
     accrued: acc,
     used,
     pending: sum(year, 'pending'),
@@ -268,8 +269,12 @@ function validate(l: Leave): number {
   const b = balance(e, t, leaveYear, effectiveMonth, l.id ?? 0)
   const available = b.remaining - b.pending
   // ponytail: later years' carry-over isn't re-validated when an older leave changes.
-  if (days > available + 1e-9)
-    throw new Error(`Needs ${days} day(s) but only ${available.toFixed(2)} ${t.name} available.`)
+  if (days > available + 1e-9) {
+    const s = String(available)
+    const dot = s.indexOf('.')
+    const availStr = dot === -1 ? s : s.slice(0, dot + 4)
+    throw new Error(`Needs ${days} day(s) but only ${availStr} ${t.name} available.`)
+  }
   return days
 }
 
@@ -442,15 +447,16 @@ const handlers: Api = {
     return emps.flatMap((e) =>
       types.map((t) => {
         const sum = (y: number, s: Status): number => sumMap.get(`${e.id}:${t.id}:${y}:${s}`) ?? 0
+        const hasStart = startMap.has(`${e.id}:${t.id}`)
         const start = startMap.get(`${e.id}:${t.id}`) ?? 0
-        const carry = Math.max(start, carryOver(t, e.hire_date, year, (y) => sum(y, 'approved'), start))
-        const acc = carry + accrued(t, e.hire_date, year, month)
+        const carry = hasStart ? start : carryOver(t, e.hire_date, year, (y) => sum(y, 'approved'), 0)
+        const acc = hasStart ? start : carry + accrued(t, e.hire_date, year, month)
         const used = sum(year, 'approved')
         return {
           employee_id: e.id!,
           leave_type_id: t.id!,
           carry,
-          entitled: carry + entitlement(t, e.hire_date, year),
+          entitled: hasStart ? start : carry + entitlement(t, e.hire_date, year),
           accrued: acc,
           used,
           pending: sum(year, 'pending'),

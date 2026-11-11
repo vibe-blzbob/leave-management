@@ -29,11 +29,11 @@ async function main() {
   console.log('🔨 Step 1: Compiling application (TypeScript & Vite)...')
   execSync('npm run build', { cwd: rootDir, stdio: 'inherit' })
 
-  // 2. Locate base app.asar from previous build
+  // 2. Locate base app.asar from previous build (auto-create if missing)
   const baseAsarPath = path.join(distDir, 'win-unpacked', 'resources', 'app.asar')
   if (!fs.existsSync(baseAsarPath)) {
-    console.error(`❌ Base app.asar not found at ${baseAsarPath}.`)
-    process.exit(1)
+    console.log('ℹ Base app.asar not found; creating it automatically...')
+    execSync('node scripts/create-asar.js', { cwd: rootDir, stdio: 'inherit' })
   }
 
   // 3. Staging and updating with freshly compiled files

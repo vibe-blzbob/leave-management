@@ -422,7 +422,13 @@ export function DateRangeInput({
   )
 }
 
-export const num = (n: number): string => (Number.isInteger(n) ? String(n) : n.toFixed(2))
+export const num = (n: number): string => {
+  if (n === null || n === undefined || isNaN(n)) return '0'
+  if (Number.isInteger(n)) return String(n)
+  const s = String(n)
+  const dot = s.indexOf('.')
+  return dot === -1 ? s : s.slice(0, dot + 4)
+}
 
 export const statusColor: Record<string, string> = {
   pending: 'bg-amber-500/15 text-amber-300',

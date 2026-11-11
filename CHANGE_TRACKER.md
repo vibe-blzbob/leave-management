@@ -11,6 +11,7 @@ Track changes to the system. Entries are strictly partitioned into what ships in
 |---|---|---|---|---|---|
 | PATCH-001 | 2026-11-11 | Leave Types | Consolidated into 2 primary types (Vacation & Sick). Sub-types selectable via dropdown when Vacation Leave chosen. Unified VL balance deduction and CS Form 6 mapping. | `src/shared/types.ts`, `src/main/db.ts`, `src/renderer/src/pages/Leave.tsx`, `Calendar.tsx`, `PrintLeave.tsx` | Ready for Patch |
 | PATCH-002 | 2026-11-11 | Reports / Printing | Official CSC Employee's Leave Card with 26-row dual Vacation & Sick Leave ledger, monthly accruals (1.25/mo), Folio landscape printing, accessible via Employee Detail and Reports (supporting single employee or whole department batch printing). | `src/renderer/src/pages/PrintLeaveCard.tsx`, `App.tsx`, `main.tsx`, `EmployeeDetail.tsx`, `Reports.tsx`, `src/main/db.ts`, `src/shared/types.ts` | Ready for Patch |
+| PATCH-003 | 2026-11-11 | Balances | Float values up to 3 decimal points with zero rounding in BalanceModal and EmployeeForm; direct balance setting independent of statutory monthly accruals; display truncation in `num()`. | `src/renderer/src/lib.tsx`, `src/renderer/src/pages/Reports.tsx`, `src/renderer/src/pages/Employees.tsx`, `src/main/db.ts`, `src/renderer/src/browserApi.ts` | Ready for Patch |
 
 ### Patch Inclusion Criteria
 - [x] Direct fix or user-requested capability for existing installations.

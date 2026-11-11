@@ -519,12 +519,15 @@ export function BalanceModal({
               <span>{t.name} (Days)</span>
               <input
                 type="number"
-                step="0.5"
+                step="0.001"
                 min="0"
                 className="input"
                 value={bals[t.id!] ?? 0}
                 onChange={(e) => {
-                  const val = parseFloat(e.target.value) || 0
+                  const valStr = e.target.value
+                  const parts = valStr.split('.')
+                  if (parts[1] && parts[1].length > 3) return
+                  const val = parseFloat(valStr) || 0
                   setBals((prev) => ({ ...prev, [t.id!]: val }))
                 }}
               />

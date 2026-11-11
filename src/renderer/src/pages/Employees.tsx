@@ -316,13 +316,16 @@ export function EmployeeForm(props: {
                   <span className="truncate">{t.name}</span>
                   <input
                     type="number"
-                    step="0.5"
+                    step="0.001"
                     min="0"
                     className="input text-xs py-1"
                     name={`start_bal_${t.id}`}
                     value={startBalances[t.id!] ?? 0}
                     onChange={(ev) => {
-                      const val = parseFloat(ev.target.value) || 0
+                      const valStr = ev.target.value
+                      const parts = valStr.split('.')
+                      if (parts[1] && parts[1].length > 3) return
+                      const val = parseFloat(valStr) || 0
                       setStartBalances((prev) => ({ ...prev, [t.id!]: val }))
                     }}
                   />

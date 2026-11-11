@@ -301,15 +301,16 @@ export const browserApi: Api = {
         const empLeaves = leaves.filter((l) => l.employee_id === e.id && l.leave_type_id === t.id)
         const sum = (y: number, s: Status): number =>
           empLeaves.filter((l) => +l.start_date.slice(0, 4) === y && l.status === s).reduce((acc, l) => acc + l.days, 0)
+        const hasStart = `${e.id}:${t.id}` in startMap
         const start = startMap[`${e.id}:${t.id}`] ?? 0
-        const carry = Math.max(start, carryOver(t, e.hire_date, year, (y) => sum(y, 'approved'), start))
-        const acc = carry + accrued(t, e.hire_date, year, month)
+        const carry = hasStart ? start : carryOver(t, e.hire_date, year, (y) => sum(y, 'approved'), 0)
+        const acc = hasStart ? start : carry + accrued(t, e.hire_date, year, month)
         const used = sum(year, 'approved')
         return {
           employee_id: e.id!,
           leave_type_id: t.id!,
           carry,
-          entitled: carry + entitlement(t, e.hire_date, year),
+          entitled: hasStart ? start : carry + entitlement(t, e.hire_date, year),
           accrued: acc,
           used,
           pending: sum(year, 'pending'),
