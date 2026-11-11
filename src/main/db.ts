@@ -498,9 +498,11 @@ ipcMain.handle('db', async (event, method: string, ...args: unknown[]) => {
     const opts = (args[1] || {}) as { landscape?: boolean }
     const isLandscape = Boolean(opts.landscape)
     const buffer = await event.sender.printToPDF({
+      landscape: isLandscape,
       pageSize: isLandscape ? { width: 13, height: 8.5 } : { width: 8.5, height: 13 },
       margins: { top: 0, bottom: 0, left: 0, right: 0 },
-      printBackground: true
+      printBackground: true,
+      preferCSSPageSize: true
     })
     const name = String(args[0] || 'leave-application').replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 60)
     const pdfPath = join(app.getPath('temp'), `${name}-${Date.now()}.pdf`)

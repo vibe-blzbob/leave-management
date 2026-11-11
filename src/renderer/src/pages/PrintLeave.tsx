@@ -374,6 +374,13 @@ export default function PrintLeave(): React.JSX.Element {
         </div>
       </header>
 
+      <style>{`
+        @page {
+          size: 8.5in 13in;
+          margin: 0;
+        }
+      `}</style>
+
       {/* ================= PRINT CANVAS CONTAINER (8.5 × 13 INCHES) ================= */}
       <div className="w-full py-8 px-2 flex justify-center overflow-auto print:p-0 print:overflow-visible print:block">
         <div className="cs-form-printable flex flex-col gap-10 items-center print:block" style={{ width: '8.5in' }}>

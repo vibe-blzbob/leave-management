@@ -152,7 +152,6 @@
 
 @media print {
   @page {
-    size: 8.5in 13in;
     margin: 0;
   }
   html,
@@ -177,9 +176,11 @@
     box-shadow: none !important;
     overflow: hidden;
     break-after: page;
+    page-break-after: always;
   }
   .cs-page:last-child {
     break-after: auto;
+    page-break-after: auto;
   }
   .card {
     @apply border-0 bg-white p-0;

@@ -27,6 +27,7 @@ Track changes to the system. Entries are strictly partitioned into what ships in
 | INT-001 | 2026-11-11 | Docs / Tracking | Initialize intent documentation and system change tracker ledger. | `docs/intent/change-tracker.md`, `CHANGE_TRACKER.md` | Done |
 | INT-002 | 2026-11-11 | Docs / Intent | Save confirmed statement of intent for 2 primary leave types & vacation sub-types. | `docs/intent/leave-subtypes.md` | Done |
 | INT-003 | 2026-11-11 | Tooling / Release | Added standalone micro-patch installer builder (`scripts/build-patch.js`, `build-patch.bat`). Compiles only changed application code into a lightweight update executable. | `scripts/build-patch.js`, `build-patch.bat`, `package.json` | Done |
+| INT-004 | 2026-11-11 | Architecture / Spec | Documented LeaveDesk standard printing and PDF generation specification for future reports and forms. | `docs/PRINTING_SPEC.md` | Done |
 
 ---
 
