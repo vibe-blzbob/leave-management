@@ -447,10 +447,11 @@ export function Modal(props: {
   children: ReactNode
   maxWidth?: string
   className?: string
+  overflowVisible?: boolean
 }): ReactNode {
   return (
     <div
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-sm p-3 sm:p-4 md:p-6 flex items-center justify-center min-h-screen"
+      className="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-sm p-3 sm:p-4 md:p-6 flex items-start justify-center pt-10 sm:pt-14 md:pt-16 pb-10 min-h-screen"
       onMouseDown={(e) => e.target === e.currentTarget && props.onClose()}
       onKeyDown={(e) => e.key === 'Escape' && props.onClose()}
     >
@@ -458,7 +459,7 @@ export function Modal(props: {
         role="dialog"
         aria-modal="true"
         aria-label={props.title}
-        className={`card w-full ${props.maxWidth || 'max-w-md'} max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-3rem)] overflow-y-auto shadow-2xl flex flex-col my-auto transition-all ${props.className || ''}`}
+        className={`card w-full ${props.maxWidth || 'max-w-md'} max-h-[calc(100vh-6rem)] sm:max-h-[calc(100vh-8rem)] ${props.overflowVisible ? 'overflow-visible' : 'overflow-y-auto'} shadow-2xl flex flex-col mb-auto transition-all ${props.className || ''}`}
       >
         <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-800 shrink-0">
           <h2 className="text-base sm:text-lg font-semibold text-white truncate pr-2">{props.title}</h2>
@@ -471,7 +472,7 @@ export function Modal(props: {
             ✕
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto">
+        <div className={`flex-1 ${props.overflowVisible ? 'overflow-visible' : 'overflow-y-auto'}`}>
           {props.children}
         </div>
       </div>

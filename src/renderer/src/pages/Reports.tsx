@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api, DateInput, downloadCsv, errMsg, getCachedBalances, invalidateBalancesCache, Modal, num, prefetchReports, useLoad } from '../lib'
 import type { Balance, Employee, LeaveRow, LeaveType } from '../../../shared/types'
@@ -29,6 +29,27 @@ export default function Reports(): React.JSX.Element {
     .filter((e) => !f.department || e.department === f.department)
     .sort((a, b) => a.name.localeCompare(b.name))
   const activeTypes = types.filter((t) => !f.leaveTypeId || String(t.id) === f.leaveTypeId)
+
+  const deptOptions = useMemo(
+    () => [
+      { value: '', label: 'All Departments (All Employees)' },
+      ...departments.map((d) => ({ value: d, label: d }))
+    ],
+    [departments]
+  )
+
+  const empOptions = useMemo(
+    () =>
+      employees
+        .filter((e) => e.active)
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map((e) => ({
+          value: String(e.id),
+          label: e.name,
+          sublabel: e.department || 'General'
+        })),
+    [employees]
+  )
 
   const balRows = balances
     .filter((b) => {
@@ -277,7 +298,11 @@ export default function Reports(): React.JSX.Element {
       </div>
 
       {showLeaveCardModal && (
-        <Modal title="Print Employee's Leave Card (CSC Form)" onClose={() => setShowLeaveCardModal(false)}>
+        <Modal
+          title="Print Employee's Leave Card (CSC Form)"
+          onClose={() => setShowLeaveCardModal(false)}
+          overflowVisible
+        >
           <div className="space-y-4">
             <p className="text-xs text-slate-400">
               Generate the official Civil Service Employee&apos;s Leave Card with 26-row dual Vacation &amp; Sick Leave ledgers.
@@ -317,37 +342,26 @@ export default function Reports(): React.JSX.Element {
             {cardScope === 'department' ? (
               <label className="label">
                 Department
-                <select
-                  className="input"
+                <SearchSelect
+                  options={deptOptions}
                   value={cardDept}
-                  onChange={(e) => setCardDept(e.target.value)}
-                >
-                  <option value="">All Departments (All Employees)</option>
-                  {departments.map((d) => (
-                    <option key={d} value={d}>
-                      {d}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setCardDept}
+                  placeholder="All Departments (All Employees)"
+                  searchPlaceholder="Search department…"
+                  emptyText="No departments found"
+                />
               </label>
             ) : (
               <label className="label">
                 Employee
-                <select
-                  className="input"
+                <SearchSelect
+                  options={empOptions}
                   value={cardEmpId}
-                  onChange={(e) => setCardEmpId(e.target.value)}
-                >
-                  <option value="">Select Employee…</option>
-                  {employees
-                    .filter((e) => e.active)
-                    .sort((a, b) => a.name.localeCompare(b.name))
-                    .map((e) => (
-                      <option key={e.id} value={e.id}>
-                        {e.name} · {e.department || 'General'}
-                      </option>
-                    ))}
-                </select>
+                  onChange={setCardEmpId}
+                  placeholder="Select Employee…"
+                  searchPlaceholder="Search employee or department…"
+                  emptyText="No matching employees"
+                />
               </label>
             )}
 
@@ -390,6 +404,108 @@ export default function Reports(): React.JSX.Element {
             prefetchReports(year).then(setBalances)
           }}
         />
+      )}
+    </div>
+  )
+}
+
+interface SearchSelectOption {
+  value: string
+  label: string
+  sublabel?: string
+}
+
+function SearchSelect({
+  options,
+  value,
+  onChange,
+  placeholder,
+  searchPlaceholder = 'Search…',
+  emptyText = 'No results found'
+}: {
+  options: SearchSelectOption[]
+  value: string
+  onChange: (val: string) => void
+  placeholder: string
+  searchPlaceholder?: string
+  emptyText?: string
+}): React.JSX.Element {
+  const [open, setOpen] = useState(false)
+  const [search, setSearch] = useState('')
+
+  const selected = options.find((o) => o.value === value)
+  const query = search.trim().toLowerCase()
+  const filtered = options.filter(
+    (o) => !query || `${o.label} ${o.sublabel || ''}`.toLowerCase().includes(query)
+  )
+
+  return (
+    <div className="relative w-full">
+      <button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        className="input flex items-center justify-between text-left cursor-pointer w-full"
+      >
+        <span className={selected && selected.value ? 'text-white truncate' : 'text-slate-400'}>
+          {selected ? (
+            <>
+              {selected.label}
+              {selected.sublabel && (
+                <span className="text-xs text-slate-400 ml-2">· {selected.sublabel}</span>
+              )}
+            </>
+          ) : (
+            placeholder
+          )}
+        </span>
+        <span className="ml-2 text-xs text-slate-400">{open ? '▲' : '▼'}</span>
+      </button>
+
+      {open && (
+        <>
+          <div
+            className="fixed inset-0 z-40"
+            onClick={() => {
+              setOpen(false)
+              setSearch('')
+            }}
+          />
+          <div className="absolute z-50 left-0 right-0 mt-1 max-h-60 w-full rounded-lg border border-slate-700 bg-slate-900 shadow-2xl flex flex-col p-2 gap-1.5">
+            <input
+              className="input text-xs py-1"
+              placeholder={searchPlaceholder}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              autoFocus
+            />
+            <div className="overflow-y-auto max-h-48 divide-y divide-slate-800">
+              {filtered.map((o) => {
+                const isSelected = o.value === value
+                return (
+                  <button
+                    key={o.value}
+                    type="button"
+                    onClick={() => {
+                      onChange(o.value)
+                      setOpen(false)
+                      setSearch('')
+                    }}
+                    className={`w-full px-2.5 py-1.5 text-left text-sm hover:bg-slate-800 flex justify-between items-center rounded transition cursor-pointer ${isSelected ? 'bg-indigo-500/20 text-indigo-300 font-medium' : 'text-slate-200'
+                      }`}
+                  >
+                    <span className="truncate">{o.label}</span>
+                    {o.sublabel && (
+                      <span className="text-xs text-slate-400 ml-2 shrink-0">{o.sublabel}</span>
+                    )}
+                  </button>
+                )
+              })}
+              {filtered.length === 0 && (
+                <div className="p-2 text-center text-xs text-slate-500">{emptyText}</div>
+              )}
+            </div>
+          </div>
+        </>
       )}
     </div>
   )
