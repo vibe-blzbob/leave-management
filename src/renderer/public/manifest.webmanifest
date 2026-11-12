@@ -1,0 +1,19 @@
+{
+  "name": "LeaveDesk Management",
+  "short_name": "LeaveDesk",
+  "description": "Leave Management & CSC Leave Card System",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
+

@@ -5,6 +5,10 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   root: 'src/renderer',
+  build: {
+    outDir: resolve(__dirname, 'out/web'),
+    emptyOutDir: true
+  },
   resolve: {
     alias: {
       '@renderer': resolve(__dirname, 'src/renderer/src')
