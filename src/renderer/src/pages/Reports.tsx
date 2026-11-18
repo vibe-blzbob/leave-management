@@ -2,9 +2,42 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api, DateInput, downloadCsv, errMsg, getCachedBalances, invalidateBalancesCache, Modal, num, prefetchReports, useLoad } from '../lib'
 import type { Balance, Employee, LeaveRow, LeaveType } from '../../../shared/types'
+import maguindanaoLogo from '../assets/maguindanao_del_norte.jpg'
+
+const MONTH_NAMES = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+]
+
+function formatDisplayDate(val?: string): string {
+  if (!val) return ''
+  const d = new Date(val.length === 10 ? val + 'T00:00:00' : val)
+  if (isNaN(d.getTime())) return val
+  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+}
 
 export default function Reports(): React.JSX.Element {
   const [tab, setTab] = useState<'balances' | 'history'>('balances')
+  const [period, setPeriod] = useState<'daily' | 'monthly' | 'yearly' | 'custom'>('monthly')
+  const now = new Date()
+  const [dailyDate, setDailyDate] = useState(() => {
+    const d = new Date()
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  })
+  const [monthIdx, setMonthIdx] = useState(now.getMonth())
+  const [monthYear, setMonthYear] = useState(now.getFullYear())
+  const [yearYear, setYearYear] = useState(now.getFullYear())
+
   const [employees] = useLoad(api.listEmployees, [] as Employee[])
   const [types] = useLoad(api.listTypes, [] as LeaveType[])
   const [leaves] = useLoad(api.listLeaves, [] as LeaveRow[])
@@ -17,7 +50,7 @@ export default function Reports(): React.JSX.Element {
   const [cardDept, setCardDept] = useState('')
   const [cardEmpId, setCardEmpId] = useState('')
   const [cardYear, setCardYear] = useState(year)
-  const [f, setF] = useState({ from: `${year}-01-01`, to: `${year}-12-31`, employee: '', department: '', leaveTypeId: '' })
+  const [f, setF] = useState({ from: `${year}-01-01`, to: `${year}-12-31`, employee: '', department: '', leaveTypeId: '', status: 'approved' })
   useEffect(() => {
     prefetchReports(year).then(setBalances)
   }, [year])
@@ -29,6 +62,46 @@ export default function Reports(): React.JSX.Element {
     .filter((e) => !f.department || e.department === f.department)
     .sort((a, b) => a.name.localeCompare(b.name))
   const activeTypes = types.filter((t) => !f.leaveTypeId || String(t.id) === f.leaveTypeId)
+
+  const activeRange = useMemo(() => {
+    if (period === 'daily') {
+      return {
+        from: dailyDate,
+        to: dailyDate,
+        title: 'Daily Leave Attendance Report',
+        periodLabel: formatDisplayDate(dailyDate),
+        fileSlug: `daily-${dailyDate}`
+      }
+    }
+    if (period === 'monthly') {
+      const lastDay = new Date(monthYear, monthIdx + 1, 0).getDate()
+      const mStr = String(monthIdx + 1).padStart(2, '0')
+      const mName = MONTH_NAMES[monthIdx]
+      return {
+        from: `${monthYear}-${mStr}-01`,
+        to: `${monthYear}-${mStr}-${String(lastDay).padStart(2, '0')}`,
+        title: 'Monthly Leave Attendance Report',
+        periodLabel: `${mName} ${monthYear}`,
+        fileSlug: `monthly-${monthYear}-${mStr}`
+      }
+    }
+    if (period === 'yearly') {
+      return {
+        from: `${yearYear}-01-01`,
+        to: `${yearYear}-12-31`,
+        title: 'Annual Leave Attendance Report',
+        periodLabel: `Calendar Year ${yearYear}`,
+        fileSlug: `annual-${yearYear}`
+      }
+    }
+    return {
+      from: f.from,
+      to: f.to,
+      title: 'Leave Attendance Report',
+      periodLabel: `${f.from} to ${f.to}`,
+      fileSlug: `${f.from}-to-${f.to}`
+    }
+  }, [period, dailyDate, monthIdx, monthYear, yearYear, f.from, f.to])
 
   const deptOptions = useMemo(
     () => [
@@ -61,28 +134,35 @@ export default function Reports(): React.JSX.Element {
       return true
     })
     .sort((a, b) => name(a.employee_id).localeCompare(name(b.employee_id)))
+
   const histRows = leaves.filter(
     (l) =>
-      l.end_date >= f.from &&
-      l.start_date <= f.to &&
+      l.end_date >= activeRange.from &&
+      l.start_date <= activeRange.to &&
+      (!f.status || l.status === f.status) &&
       (!f.employee || l.employee_id === +f.employee) &&
       (!f.department || l.department === f.department) &&
       (!f.leaveTypeId || l.leave_type_id === +f.leaveTypeId)
   )
 
+  const totalHistDays = histRows.reduce((sum, r) => sum + r.days, 0)
+
   const selectedType = types.find((t) => String(t.id) === f.leaveTypeId)
   const typeSuffix = selectedType ? `-${selectedType.name.toLowerCase()}` : ''
 
-  const csv = (): void =>
-    tab === 'balances'
-      ? downloadCsv(`leave-balances-${year}${typeSuffix}.csv`, [
+  const csv = (): void => {
+    if (tab === 'balances') {
+      downloadCsv(`leave-balances-${year}${typeSuffix}.csv`, [
         ['Employee', 'Leave type', 'Carry-over', 'Accrued', 'Used', 'Pending', 'Remaining'],
         ...balRows.map((b) => [name(b.employee_id), typeName(b.leave_type_id), num(b.carry), num(b.accrued), num(b.used), num(b.pending), num(b.remaining)])
       ])
-      : downloadCsv(`leave-history-${f.from}-to-${f.to}${typeSuffix}.csv`, [
-        ['Employee', 'Department', 'Leave type', 'Start', 'End', 'Days', 'Status', 'Reason'],
-        ...histRows.map((l) => [l.employee_name, l.department, l.type_name, l.start_date, l.end_date, l.days, l.status, l.reason])
+    } else {
+      downloadCsv(`leave-attendance-${activeRange.fileSlug}${typeSuffix}.csv`, [
+        ['Employee', 'Department', 'Leave type', 'Start Date', 'End Date', 'Days', 'Status', 'Reason'],
+        ...histRows.map((l) => [l.employee_name, l.department, l.type_name, l.start_date, l.end_date, l.days, l.status, l.reason || '-'])
       ])
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -118,7 +198,7 @@ export default function Reports(): React.JSX.Element {
               onClick={() => setTab(t)}
               className={`rounded-lg px-3 py-1.5 text-sm transition ${tab === t ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200'}`}
             >
-              {t === 'balances' ? 'Balance summary' : 'Leave history'}
+              {t === 'balances' ? 'Balance summary' : 'Leave attendance'}
             </button>
           ))}
         </div>
@@ -130,13 +210,97 @@ export default function Reports(): React.JSX.Element {
             </label>
           ) : (
             <>
+              <div className="flex flex-col gap-1">
+                <span className="text-xs font-medium text-slate-400">Report Period</span>
+                <div className="flex rounded-lg bg-slate-950 p-1 border border-slate-800" role="group">
+                  {(['daily', 'monthly', 'yearly', 'custom'] as const).map((p) => (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => setPeriod(p)}
+                      className={`px-3 py-1 text-xs font-medium rounded-md transition cursor-pointer capitalize ${
+                        period === p ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      {p === 'daily' ? 'Daily' : p === 'monthly' ? 'Monthly' : p === 'yearly' ? 'Yearly' : 'Custom'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {period === 'daily' && (
+                <label className="label">
+                  Date
+                  <DateInput value={dailyDate} onChange={(e) => setDailyDate(e.target.value)} />
+                </label>
+              )}
+
+              {period === 'monthly' && (
+                <>
+                  <label className="label">
+                    Month
+                    <select
+                      className="input min-w-32"
+                      value={monthIdx}
+                      onChange={(e) => setMonthIdx(+e.target.value)}
+                    >
+                      {MONTH_NAMES.map((m, idx) => (
+                        <option key={m} value={idx}>
+                          {m}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="label">
+                    Year
+                    <input
+                      className="input w-24"
+                      type="number"
+                      value={monthYear}
+                      onChange={(e) => setMonthYear(+e.target.value)}
+                    />
+                  </label>
+                </>
+              )}
+
+              {period === 'yearly' && (
+                <label className="label">
+                  Year
+                  <input
+                    className="input w-24"
+                    type="number"
+                    value={yearYear}
+                    onChange={(e) => setYearYear(+e.target.value)}
+                  />
+                </label>
+              )}
+
+              {period === 'custom' && (
+                <>
+                  <label className="label">
+                    From
+                    <DateInput value={f.from} onChange={(e) => setF({ ...f, from: e.target.value })} />
+                  </label>
+                  <label className="label">
+                    To
+                    <DateInput value={f.to} onChange={(e) => setF({ ...f, to: e.target.value })} />
+                  </label>
+                </>
+              )}
+
               <label className="label">
-                From
-                <DateInput value={f.from} onChange={(e) => setF({ ...f, from: e.target.value })} />
-              </label>
-              <label className="label">
-                To
-                <DateInput value={f.to} onChange={(e) => setF({ ...f, to: e.target.value })} />
+                Status
+                <select
+                  className="input min-w-28"
+                  value={f.status}
+                  onChange={(e) => setF({ ...f, status: e.target.value })}
+                >
+                  <option value="approved">Approved only</option>
+                  <option value="">All statuses</option>
+                  <option value="pending">Pending</option>
+                  <option value="rejected">Rejected</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
               </label>
             </>
           )}
@@ -187,9 +351,62 @@ export default function Reports(): React.JSX.Element {
       </div>
 
       <div className="space-y-6">
-        <h2 className="hidden p-0 print:block">
-          {tab === 'balances' ? `Leave balance summary — ${year}` : `Leave history — ${f.from} to ${f.to}`}
-        </h2>
+        {/* Official Print Header */}
+        <div className="hidden print:block mb-6 border-b border-black pb-4 text-center">
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <img src={maguindanaoLogo} alt="Seal" className="h-12 w-12 object-cover rounded-full" />
+            <div className="text-left">
+              <div className="text-xs uppercase tracking-wider text-slate-700 font-medium">Republic of the Philippines</div>
+              <div className="text-sm font-bold text-black uppercase">Province of Maguindanao del Norte</div>
+              <div className="text-xs text-slate-600">Office of the Provincial Governor • Human Resource Management</div>
+            </div>
+          </div>
+          <h2 className="text-lg font-bold uppercase tracking-tight text-black mt-2">
+            {tab === 'balances' ? `Leave Balance Summary — ${year}` : activeRange.title}
+          </h2>
+          <div className="text-xs font-semibold text-slate-700">
+            {tab === 'balances' ? `Calendar Year ${year}` : activeRange.periodLabel}
+          </div>
+          <div className="flex justify-between items-center text-[11px] text-slate-600 mt-3 pt-2 border-t border-slate-300">
+            <span>
+              {f.department ? `Department: ${f.department}` : 'All Departments'}
+              {selectedType ? ` • Type: ${selectedType.name}` : ''}
+              {tab === 'history' ? (f.status ? ` • Status: ${f.status.toUpperCase()}` : ' • All Statuses') : ''}
+            </span>
+            <span>
+              {tab === 'balances' ? (
+                <>Total Employees: <strong className="text-black">{balRows.length}</strong></>
+              ) : (
+                <>
+                  Total Records: <strong className="text-black">{histRows.length}</strong> | Total Days:{' '}
+                  <strong className="text-black">{totalHistDays}</strong>
+                </>
+              )}
+            </span>
+          </div>
+        </div>
+
+        {tab === 'history' && (
+          <div className="no-print flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-slate-900/60 border border-slate-800">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="text-xs text-slate-400">
+                Period: <span className="text-white font-medium">{activeRange.periodLabel}</span>
+              </div>
+              <span className="text-slate-700">•</span>
+              <div className="text-xs text-slate-400">
+                Records: <span className="text-indigo-400 font-semibold">{histRows.length}</span>
+              </div>
+              <span className="text-slate-700">•</span>
+              <div className="text-xs text-slate-400">
+                Total Days: <span className="text-indigo-400 font-semibold">{totalHistDays}</span>
+              </div>
+            </div>
+            <div className="text-xs text-slate-400">
+              {f.status ? `Showing ${f.status} leaves` : 'Showing all leave statuses'}
+            </div>
+          </div>
+        )}
+
         {tab === 'balances'
           ? activeTypes.map((t) => {
             const rows = balRows.filter((b) => b.leave_type_id === t.id)
@@ -252,11 +469,12 @@ export default function Reports(): React.JSX.Element {
           })
           : activeTypes.map((t) => {
             const rows = histRows.filter((l) => l.leave_type_id === t.id)
+            const typeDays = rows.reduce((s, r) => s + r.days, 0)
             return (
               <div key={t.id} className="card overflow-x-auto p-0">
                 <div className="border-b border-slate-800 px-4 py-3 bg-slate-900/40 flex items-center justify-between">
                   <h3 className="text-base font-semibold text-white">{t.name} Leave</h3>
-                  <span className="text-xs text-slate-400">{rows.length} record{rows.length === 1 ? '' : 's'}</span>
+                  <span className="text-xs text-slate-400">{rows.length} record{rows.length === 1 ? '' : 's'} • {typeDays} day{typeDays === 1 ? '' : 's'}</span>
                 </div>
                 <table className="table">
                   <thead>
@@ -286,11 +504,20 @@ export default function Reports(): React.JSX.Element {
                           </td>
                           <td>{l.days}</td>
                           <td className="capitalize">{l.status}</td>
-                          <td>{l.reason}</td>
+                          <td>{l.reason || '-'}</td>
                         </tr>
                       ))
                     )}
                   </tbody>
+                  {rows.length > 0 && (
+                    <tfoot>
+                      <tr className="border-t border-slate-800 bg-slate-900/60 font-semibold text-slate-300">
+                        <td colSpan={3} className="text-right pr-4">Total {t.name} Days:</td>
+                        <td>{typeDays}</td>
+                        <td colSpan={2} />
+                      </tr>
+                    </tfoot>
+                  )}
                 </table>
               </div>
             )
